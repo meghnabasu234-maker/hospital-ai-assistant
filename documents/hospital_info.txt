@@ -1,0 +1,34 @@
+HOSPITAL INFORMATION
+
+Hospital Name: City Care Hospital
+
+DEPARTMENTS
+
+Cardiology & Heart Care:
+Specialized treatment for heart and cardiovascular diseases.
+
+Neurology:
+Provides diagnosis and treatment for disorders of the brain and nervous system.
+
+DOCTOR
+
+Dr. Amit Roy:
+Specialization: Cardiologist
+Department: Cardiology & Heart Care
+
+SERVICES
+
+The hospital provides outpatient consultations, diagnostic services,
+regular health checkups, emergency care, and specialist consultations.
+
+APPOINTMENTS
+
+Patients can book appointments with doctors according to their
+availability. Patients should provide their patient ID, preferred
+doctor, date, and time when requesting an appointment.
+
+GENERAL INFORMATION
+
+Patients should arrive at least 15 minutes before their scheduled
+appointment. Emergency cases should be directed to the emergency
+department immediately.
