@@ -1,4 +1,5 @@
 from fastapi import FastAPI, Depends, HTTPException, WebSocket
+from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from pydantic import BaseModel
@@ -59,6 +60,7 @@ app = FastAPI(
     ),
     version="1.0.0"
 )
+app.mount("/frontend", StaticFiles(directory="frontend"), name="frontend")
 
 
 # ============================================================
