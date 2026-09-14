@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Hospital AI WebSocket Test</title>
+</head>
+
+<body>
+
+    <h2>Hospital AI WebSocket Test</h2>
+
+    <!-- LOGIN -->
+
+    <h3>Login</h3>
+
+    <input
+        type="text"
+        id="username"
+        placeholder="Username"
+    >
+
+    <br><br>
+
+    <input
+        type="password"
+        id="password"
+        placeholder="Password"
+    >
+
+    <br><br>
+
+    <button onclick="login()">
+        Login
+    </button>
+
+    <p>
+        <strong>Login Status:</strong>
+    </p>
+
+    <div id="loginStatus">
+        Not logged in
+    </div>
+
+
+    <hr>
+
+
+    <!-- CHAT -->
+
+    <h3>WebSocket Chat</h3>
+
+    <input
+        type="text"
+        id="message"
+        placeholder="Enter your question"
+    >
+
+    <button onclick="sendMessage()">
+        Send
+    </button>
+
+    <p>
+        <strong>Response:</strong>
+    </p>
+
+    <div id="response">
+        Please login first.
+    </div>
+
+
+    <script>
+
+        let token = null;
+        let ws = null;
+
+
+        // -------------------------------------------------
+        // LOGIN
+        // -------------------------------------------------
+
+        async function login() {
+
+            const username =
+                document.getElementById("username").value;
+
+            const password =
+                document.getElementById("password").value;
+
+
+            if (
+                username.trim() === "" ||
+                password.trim() === ""
+            ) {
+
+                document.getElementById("loginStatus").innerText =
+                    "Please enter username and password.";
+
+                return;
+            }
+
+
+            try {
+
+                const response = await fetch(
+                    "http://127.0.0.1:8000/auth/login",
+                    {
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+
+                        body: JSON.stringify({
+                            username: username,
+                            password: password
+                        })
+                    }
+                );
+
+
+                const data = await response.json();
+
+
+                if (!response.ok) {
+
+                    document.getElementById("loginStatus").innerText =
+                        "Login failed: " +
+                        (data.detail || "Invalid credentials");
+
+                    return;
+                }
+
+
+                // Save JWT token
+
+                token = data.access_token;
+
+
+                document.getElementById("loginStatus").innerText =
+                    "Login successful! Connecting to WebSocket...";
+
+
+                // Connect WebSocket
+
+                connectWebSocket();
+
+            }
+
+            catch (error) {
+
+                console.error(error);
+
+                document.getElementById("loginStatus").innerText =
+                    "Could not connect to server.";
+            }
+        }
+
+
+        // -------------------------------------------------
+        // WEBSOCKET CONNECTION
+        // -------------------------------------------------
+
+        function connectWebSocket() {
+
+            if (!token) {
+
+                document.getElementById("response").innerText =
+                    "Please login first.";
+
+                return;
+            }
+
+
+            ws = new WebSocket(
+                "ws://127.0.0.1:8000/ws/chat?token=" +
+                encodeURIComponent(token)
+            );
+
+
+            ws.onopen = function () {
+
+                document.getElementById("loginStatus").innerText =
+                    "Login successful. WebSocket connected.";
+
+                document.getElementById("response").innerText =
+                    "Ready to chat.";
+            };
+
+
+            ws.onmessage = function (event) {
+
+                document.getElementById("response").innerText =
+                    event.data;
+            };
+
+
+            ws.onerror = function () {
+
+                document.getElementById("response").innerText =
+                    "WebSocket connection error.";
+            };
+
+
+            ws.onclose = function () {
+
+                console.log(
+                    "WebSocket connection closed"
+                );
+            };
+        }
+
+
+        // -------------------------------------------------
+        // SEND MESSAGE
+        // -------------------------------------------------
+
+        function sendMessage() {
+
+            if (!ws || ws.readyState !== WebSocket.OPEN) {
+
+                document.getElementById("response").innerText =
+                    "Please login and connect first.";
+
+                return;
+            }
+
+
+            const message =
+                document.getElementById("message").value;
+
+
+            if (message.trim() === "") {
+                return;
+            }
+
+
+            ws.send(message);
+
+
+            document.getElementById("message").value = "";
+        }
+
+    </script>
+
+</body>
+
+</html>

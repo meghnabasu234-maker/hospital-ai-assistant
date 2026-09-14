@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>MediConnect AI - Doctors</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial, Helvetica, sans-serif;
+}
+
+body{
+    background:
+        linear-gradient(
+            135deg,
+            #dbeafe,
+            #eff6ff,
+            #e0f2fe
+        );
+
+    min-height:100vh;
+}
+
+
+/* HEADER */
+
+header{
+    background:#2563eb;
+    color:white;
+
+    padding:18px 30px;
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+    box-shadow:0 4px 15px rgba(37,99,235,.2);
+}
+
+header h2{
+    font-size:23px;
+}
+
+.dashboard-btn{
+    background:white;
+    color:#2563eb;
+
+    border:none;
+
+    padding:9px 17px;
+
+    border-radius:8px;
+
+    cursor:pointer;
+
+    font-weight:bold;
+}
+
+.dashboard-btn:hover{
+    background:#eff6ff;
+}
+
+
+/* MAIN */
+
+.container{
+    max-width:1100px;
+
+    margin:auto;
+
+    padding:35px 25px;
+}
+
+.heading{
+    text-align:center;
+
+    margin-bottom:30px;
+}
+
+.heading h1{
+    color:#1e3a8a;
+
+    margin-bottom:8px;
+}
+
+.heading p{
+    color:#64748b;
+
+    font-size:14px;
+}
+
+
+/* DEPARTMENT */
+
+.department{
+    margin-bottom:35px;
+}
+
+.department-title{
+    background:#2563eb;
+
+    color:white;
+
+    padding:13px 18px;
+
+    border-radius:10px;
+
+    margin-bottom:18px;
+
+    font-size:20px;
+}
+
+
+/* DOCTOR GRID */
+
+.doctor-grid{
+    display:grid;
+
+    grid-template-columns:
+        repeat(auto-fit,minmax(280px,1fr));
+
+    gap:20px;
+}
+
+
+/* DOCTOR CARD */
+
+.card{
+    background:white;
+
+    padding:22px;
+
+    border-radius:15px;
+
+    box-shadow:
+        0 7px 22px rgba(37,99,235,.10);
+
+    transition:.25s;
+
+    border:1px solid #e5e7eb;
+}
+
+.card:hover{
+    transform:translateY(-5px);
+
+    box-shadow:
+        0 12px 28px rgba(37,99,235,.18);
+}
+
+.name{
+    font-size:20px;
+
+    color:#1e40af;
+
+    font-weight:bold;
+
+    margin-bottom:8px;
+}
+
+.specialization{
+    color:#2563eb;
+
+    font-weight:bold;
+
+    margin-bottom:15px;
+}
+
+.info{
+    margin:8px 0;
+
+    color:#475569;
+
+    font-size:14px;
+
+    line-height:1.5;
+}
+
+.rating{
+    margin-top:15px;
+
+    background:#fef3c7;
+
+    color:#92400e;
+
+    display:inline-block;
+
+    padding:6px 10px;
+
+    border-radius:7px;
+
+    font-weight:bold;
+
+    font-size:14px;
+}
+
+
+/* LOADING */
+
+.loading{
+    text-align:center;
+
+    color:#64748b;
+
+    padding:40px;
+
+    font-size:16px;
+}
+
+
+/* ERROR */
+
+.error{
+    background:#fee2e2;
+
+    color:#991b1b;
+
+    padding:18px;
+
+    border-radius:10px;
+
+    text-align:center;
+}
+
+
+/* EMPTY */
+
+.empty{
+    background:white;
+
+    padding:30px;
+
+    border-radius:12px;
+
+    text-align:center;
+
+    color:#64748b;
+}
+
+
+/* MOBILE */
+
+@media(max-width:600px){
+
+    header{
+        padding:15px 20px;
+    }
+
+    header h2{
+        font-size:19px;
+    }
+
+    .container{
+        padding:25px 18px;
+    }
+
+    .doctor-grid{
+        grid-template-columns:1fr;
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<header>
+
+    <h2>
+        👨‍⚕️ MediConnect AI
+    </h2>
+
+    <button
+        class="dashboard-btn"
+        onclick="window.location='dashboard.html'">
+
+        Dashboard
+
+    </button>
+
+</header>
+
+
+
+<div class="container">
+
+
+    <div class="heading">
+
+        <h1>
+            Our Doctors
+        </h1>
+
+        <p>
+            For your care, comfort, and well-being.
+        </p>
+
+    </div>
+
+
+    <div
+        id="doctorList"
+        class="loading">
+
+        Loading doctors...
+
+    </div>
+
+
+</div>
+
+
+
+<script>
+
+
+/* GET TOKEN */
+
+const token =
+    localStorage.getItem("access_token");
+
+
+/* CHECK LOGIN */
+
+if(!token){
+
+    window.location =
+        "index.html";
+
+}
+
+
+/* LOAD DOCTORS */
+
+async function loadDoctors(){
+
+    const list =
+        document.getElementById("doctorList");
+
+
+    try{
+
+        const response =
+            await fetch(
+                "http://127.0.0.1:8000/doctors",
+                {
+                    headers:{
+                        "Authorization":
+                            "Bearer " + token
+                    }
+                }
+            );
+
+
+        if(!response.ok){
+
+            if(response.status === 401){
+
+                list.innerHTML = `
+                    <div class="error">
+                        Your session has expired.
+                        Please login again.
+                    </div>
+                `;
+
+                return;
+
+            }
+
+
+            throw new Error(
+                "Unable to load doctors."
+            );
+
+        }
+
+
+        const doctors =
+            await response.json();
+
+
+        if(!doctors.length){
+
+            list.innerHTML = `
+                <div class="empty">
+                    No doctors are currently available.
+                </div>
+            `;
+
+            return;
+
+        }
+
+
+        /* GROUP DOCTORS BY DEPARTMENT */
+
+        const departments = {};
+
+
+        doctors.forEach(doc => {
+
+            const department =
+                doc.department ||
+                "Other";
+
+            if(!departments[department]){
+
+                departments[department] = [];
+
+            }
+
+            departments[department].push(doc);
+
+        });
+
+
+        list.className = "";
+
+
+        /* DISPLAY DEPARTMENTS */
+
+        Object.keys(departments).forEach(
+            departmentName => {
+
+                const departmentSection =
+                    document.createElement("div");
+
+                departmentSection.className =
+                    "department";
+
+
+                departmentSection.innerHTML = `
+
+                    <div class="department-title">
+
+                        🏥 ${departmentName}
+
+                    </div>
+
+                    <div class="doctor-grid"></div>
+
+                `;
+
+
+                const grid =
+                    departmentSection.querySelector(
+                        ".doctor-grid"
+                    );
+
+
+                departments[departmentName]
+                    .forEach(doc => {
+
+                        const card =
+                            document.createElement("div");
+
+                        card.className =
+                            "card";
+
+
+                        card.innerHTML = `
+
+                            <div class="name">
+
+                                ${doc.name}
+
+                            </div>
+
+
+                            <div class="specialization">
+
+                                ${doc.specialization}
+
+                            </div>
+
+
+                            <div class="info">
+
+                                <b>Degree:</b>
+                                ${doc.degree || "Not available"}
+
+                            </div>
+
+
+                            <div class="info">
+
+                                <b>Experience:</b>
+                                ${doc.experience_years ?? 0}
+                                years
+
+                            </div>
+
+
+                            <div class="info">
+
+                                <b>Department:</b>
+                                ${doc.department || "Not assigned"}
+
+                            </div>
+
+
+                            <div class="rating">
+
+                                ⭐ ${doc.rating ?? 0}
+
+                            </div>
+
+                        `;
+
+
+                        grid.appendChild(card);
+
+                    });
+
+
+                list.appendChild(
+                    departmentSection
+                );
+
+            }
+        );
+
+
+    }catch(error){
+
+        console.error(error);
+
+
+        list.innerHTML = `
+
+            <div class="error">
+
+                Unable to connect to the hospital server.
+
+                <br><br>
+
+                Please make sure the FastAPI server
+                is running.
+
+            </div>
+
+        `;
+
+    }
+
+}
+
+
+/* START */
+
+loadDoctors();
+
+</script>
+
+
+</body>
+
+</html>

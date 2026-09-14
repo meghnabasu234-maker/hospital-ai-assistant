@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>WebSocket Test</title>
+</head>
+<body>
+
+<h2>Hospital AI Assistant - WebSocket Test</h2>
+
+<input id="message" type="text" placeholder="Type a message">
+<button onclick="sendMessage()">Send</button>
+
+<p><strong>Response:</strong></p>
+<p id="response"></p>
+
+<script>
+    const socket = new WebSocket("ws://127.0.0.1:8000/ws/chat");
+
+    socket.onopen = function() {
+        console.log("WebSocket connected");
+    };
+
+    socket.onmessage = function(event) {
+        document.getElementById("response").innerText = event.data;
+    };
+
+    socket.onerror = function(error) {
+        console.log("WebSocket error:", error);
+    };
+
+    function sendMessage() {
+        const message = document.getElementById("message").value;
+        socket.send(message);
+    }
+</script>
+
+</body>
+</html>

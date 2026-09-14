@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>MediConnect AI - Patients</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial, Helvetica, sans-serif;
+}
+
+body{
+    min-height:100vh;
+
+    background:
+        linear-gradient(
+            135deg,
+            #dbeafe,
+            #eff6ff,
+            #e0f2fe
+        );
+}
+
+
+/* HEADER */
+
+header{
+    background:#2563eb;
+
+    color:white;
+
+    padding:18px 35px;
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    box-shadow:
+        0 4px 15px rgba(37,99,235,.2);
+}
+
+.logo{
+    font-size:23px;
+
+    font-weight:bold;
+}
+
+.back-button{
+    background:white;
+
+    color:#2563eb;
+
+    border:none;
+
+    padding:9px 17px;
+
+    border-radius:8px;
+
+    cursor:pointer;
+
+    font-weight:bold;
+}
+
+.back-button:hover{
+    background:#eff6ff;
+}
+
+
+/* MAIN */
+
+.container{
+    max-width:1100px;
+
+    margin:auto;
+
+    padding:40px 30px;
+}
+
+.heading{
+    text-align:center;
+
+    margin-bottom:30px;
+}
+
+.heading h1{
+    color:#1e3a8a;
+
+    font-size:30px;
+
+    margin-bottom:8px;
+}
+
+.heading p{
+    color:#64748b;
+
+    font-size:15px;
+}
+
+
+/* PATIENT CARDS */
+
+.patient-list{
+    display:grid;
+
+    grid-template-columns:
+        repeat(auto-fit,minmax(260px,1fr));
+
+    gap:20px;
+}
+
+.patient-card{
+    background:white;
+
+    padding:25px;
+
+    border-radius:16px;
+
+    box-shadow:
+        0 8px 25px rgba(37,99,235,.10);
+
+    border:1px solid rgba(255,255,255,.8);
+}
+
+.patient-card h3{
+    color:#1e40af;
+
+    margin-bottom:15px;
+
+    font-size:19px;
+}
+
+.patient-card p{
+    color:#64748b;
+
+    font-size:14px;
+
+    line-height:1.7;
+}
+
+.label{
+    color:#1e3a8a;
+
+    font-weight:bold;
+}
+
+
+/* STATUS */
+
+.status{
+    display:inline-block;
+
+    margin-top:12px;
+
+    padding:6px 12px;
+
+    border-radius:15px;
+
+    background:#dbeafe;
+
+    color:#2563eb;
+
+    font-size:12px;
+
+    font-weight:bold;
+}
+
+
+/* MESSAGE */
+
+.message{
+    background:white;
+
+    padding:25px;
+
+    border-radius:16px;
+
+    text-align:center;
+
+    color:#64748b;
+
+    box-shadow:
+        0 8px 25px rgba(37,99,235,.10);
+}
+
+
+/* MOBILE */
+
+@media(max-width:600px){
+
+    header{
+        padding:15px 20px;
+    }
+
+    .logo{
+        font-size:18px;
+    }
+
+    .container{
+        padding:30px 20px;
+    }
+
+    .heading h1{
+        font-size:25px;
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<header>
+
+    <div class="logo">
+        MediConnect AI
+    </div>
+
+    <button
+        class="back-button"
+        onclick="goBack()">
+
+        ← Back
+
+    </button>
+
+</header>
+
+
+
+<div class="container">
+
+
+    <div class="heading">
+
+        <h1>
+            Patient Information
+        </h1>
+
+        <p>
+            View hospital patient information
+            based on your access permissions.
+        </p>
+
+    </div>
+
+
+    <div
+        id="patientList"
+        class="patient-list">
+
+        <div class="message">
+            Loading patient information...
+        </div>
+
+    </div>
+
+
+</div>
+
+
+
+<script>
+
+
+/* CHECK LOGIN */
+
+const token =
+    localStorage.getItem(
+        "access_token"
+    );
+
+const role =
+    localStorage.getItem(
+        "role"
+    );
+
+
+if(!token){
+
+    window.location.href =
+        "index.html";
+
+}
+
+
+/* LOAD PATIENTS */
+
+async function loadPatients(){
+
+    try{
+
+        const response =
+            await fetch(
+                "http://127.0.0.1:8000/patients",
+                {
+                    headers:{
+                        "Authorization":
+                            "Bearer " + token
+                    }
+                }
+            );
+
+
+        if(!response.ok){
+
+            throw new Error(
+                "Unable to load patients"
+            );
+
+        }
+
+
+        const patients =
+            await response.json();
+
+
+        const patientList =
+            document.getElementById(
+                "patientList"
+            );
+
+
+        patientList.innerHTML = "";
+
+
+        if(
+            patients.length === 0
+        ){
+
+            patientList.innerHTML = `
+                <div class="message">
+                    No patient records found.
+                </div>
+            `;
+
+            return;
+
+        }
+
+
+        patients.forEach(patient => {
+
+            const card =
+                document.createElement(
+                    "div"
+                );
+
+            card.className =
+                "patient-card";
+
+
+            card.innerHTML = `
+
+                <h3>
+                    ${patient.name || "Patient"}
+                </h3>
+
+                <p>
+                    <span class="label">
+                        Patient ID:
+                    </span>
+                    ${patient.id ?? "N/A"}
+                </p>
+
+                <p>
+                    <span class="label">
+                        Age:
+                    </span>
+                    ${patient.age ?? "N/A"}
+                </p>
+
+                <p>
+                    <span class="label">
+                        Gender:
+                    </span>
+                    ${patient.gender ?? "N/A"}
+                </p>
+
+                <p>
+                    <span class="label">
+                        Condition:
+                    </span>
+                    ${patient.disease ?? "N/A"}
+                </p>
+
+                <span class="status">
+                    Hospital Record
+                </span>
+
+            `;
+
+
+            patientList.appendChild(
+                card
+            );
+
+        });
+
+    }
+    catch(error){
+
+        console.error(error);
+
+
+        document.getElementById(
+            "patientList"
+        ).innerHTML = `
+
+            <div class="message">
+
+                Unable to load patient
+                information.
+
+                <br><br>
+
+                Please make sure the
+                backend server is running.
+
+            </div>
+
+        `;
+
+    }
+
+}
+
+
+/* BACK */
+
+function goBack(){
+
+    if(role === "admin"){
+
+        window.location.href =
+            "admin-dashboard.html";
+
+    }
+    else if(role === "staff"){
+
+        window.location.href =
+            "staff-dashboard.html";
+
+    }
+    else if(role === "doctor"){
+
+        window.location.href =
+            "doctor-dashboard.html";
+
+    }
+    else{
+
+        window.location.href =
+            "dashboard.html";
+
+    }
+
+}
+
+
+loadPatients();
+
+</script>
+
+
+</body>
+
+</html>

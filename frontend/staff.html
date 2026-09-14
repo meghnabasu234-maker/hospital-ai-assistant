@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hospital Staff</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f4f8ff;
+            color: #1e293b;
+            min-height: 100vh;
+        }
+
+        header {
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            color: white;
+            padding: 25px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header h1 {
+            font-size: 28px;
+        }
+
+        .back-btn {
+            background: white;
+            color: #2563eb;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .container {
+            padding: 35px;
+            max-width: 1200px;
+            margin: auto;
+        }
+
+        .title {
+            margin-bottom: 25px;
+        }
+
+        .title h2 {
+            font-size: 25px;
+            margin-bottom: 8px;
+        }
+
+        .title p {
+            color: #64748b;
+        }
+
+        #staffContainer {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .staff-card {
+            background: white;
+            border-radius: 18px;
+            padding: 25px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e2e8f0;
+        }
+
+        .staff-card h3 {
+            color: #2563eb;
+            margin-bottom: 15px;
+            font-size: 20px;
+        }
+
+        .staff-card p {
+            margin: 9px 0;
+            color: #475569;
+        }
+
+        .staff-type {
+            display: inline-block;
+            margin-top: 10px;
+            background: #dbeafe;
+            color: #1d4ed8;
+            padding: 7px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .message {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            color: #64748b;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06);
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>Hospital Staff</h1>
+    <button class="back-btn" onclick="goBack()">← Back</button>
+</header>
+
+<div class="container">
+
+    <div class="title">
+        <h2>Staff Members</h2>
+        <p>View hospital staff information and staff types.</p>
+    </div>
+
+    <div id="staffContainer">
+        <div class="message">Loading staff information...</div>
+    </div>
+
+</div>
+
+<script>
+
+    const token = localStorage.getItem("access_token");
+    const role = localStorage.getItem("role");
+
+    if (!token) {
+        window.location.href = "index.html";
+    }
+
+    async function loadStaff() {
+
+        const container = document.getElementById("staffContainer");
+
+        try {
+
+            const response = await fetch(
+                "http://127.0.0.1:8000/staff/",
+                {
+                    method: "GET",
+                    headers: {
+                        "Authorization": "Bearer " + token
+                    }
+                }
+            );
+
+            if (response.status === 401) {
+                container.innerHTML = `
+                    <div class="message">
+                        Your session has expired. Please login again.
+                    </div>
+                `;
+                return;
+            }
+
+            if (response.status === 403) {
+                container.innerHTML = `
+                    <div class="message">
+                        You do not have permission to view staff records.
+                    </div>
+                `;
+                return;
+            }
+
+            if (!response.ok) {
+                throw new Error("Failed to load staff");
+            }
+
+            const staff = await response.json();
+
+            if (staff.length === 0) {
+                container.innerHTML = `
+                    <div class="message">
+                        No staff members found.
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = "";
+
+            staff.forEach(member => {
+
+                const card = document.createElement("div");
+
+                card.className = "staff-card";
+
+                card.innerHTML = `
+                    <h3>${member.username}</h3>
+
+                    <p>
+                        <strong>ID:</strong>
+                        ${member.id}
+                    </p>
+
+                    <p>
+                        <strong>Email:</strong>
+                        ${member.email}
+                    </p>
+
+                    <span class="staff-type">
+                        ${member.staff_type || "Staff"}
+                    </span>
+                `;
+
+                container.appendChild(card);
+            });
+
+        } catch (error) {
+
+            console.error(error);
+
+            container.innerHTML = `
+                <div class="message">
+                    Unable to load staff information.
+                    Please make sure the FastAPI server is running.
+                </div>
+            `;
+        }
+    }
+
+
+    function goBack() {
+
+        if (role === "admin") {
+            window.location.href = "admin-dashboard.html";
+        }
+
+        else if (role === "staff") {
+            window.location.href = "staff-dashboard.html";
+        }
+
+        else if (role === "doctor") {
+            window.location.href = "doctor-dashboard.html";
+        }
+
+        else {
+            window.location.href = "dashboard.html";
+        }
+    }
+
+
+    loadStaff();
+
+</script>
+
+</body>
+</html>

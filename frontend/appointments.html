@@ -1,0 +1,1345 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Appointments</title>
+
+<style>
+
+body{
+    font-family:Arial, Helvetica, sans-serif;
+    background:#eef3fb;
+    margin:0;
+}
+
+header{
+    background:#2563eb;
+    color:white;
+    padding:18px 25px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+header button{
+    background:white;
+    color:#2563eb;
+    border:none;
+    padding:8px 15px;
+    border-radius:6px;
+    cursor:pointer;
+}
+
+.container{
+    padding:25px;
+    max-width:1000px;
+    margin:auto;
+}
+
+
+/* =========================
+   BOOK APPOINTMENT
+========================= */
+
+.booking-box{
+    background:white;
+    padding:25px;
+    margin-bottom:25px;
+    border-radius:10px;
+    box-shadow:0 3px 10px rgba(0,0,0,.08);
+}
+
+.booking-box h2{
+    color:#2563eb;
+    margin-top:0;
+}
+
+.booking-box p{
+    color:#64748b;
+    font-size:14px;
+}
+
+.booking-box label{
+    display:block;
+    margin-top:15px;
+    margin-bottom:6px;
+    font-weight:bold;
+    color:#334155;
+}
+
+.booking-box select,
+.booking-box textarea{
+    width:100%;
+    padding:11px;
+    box-sizing:border-box;
+    border:1px solid #cbd5e1;
+    border-radius:6px;
+    font-family:Arial, Helvetica, sans-serif;
+}
+
+.booking-box textarea{
+    min-height:100px;
+    resize:vertical;
+}
+
+.book-btn{
+    margin-top:18px;
+    background:#2563eb;
+    color:white;
+    border:none;
+    padding:11px 18px;
+    border-radius:7px;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+.book-btn:hover{
+    background:#1d4ed8;
+}
+
+.booking-message{
+    margin-top:15px;
+    font-weight:bold;
+}
+
+
+/* =========================
+   TABS
+========================= */
+
+.tabs{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    margin-bottom:25px;
+}
+
+.tab{
+    border:none;
+    padding:10px 16px;
+    border-radius:7px;
+    background:white;
+    color:#334155;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+.tab:hover{
+    background:#dbeafe;
+}
+
+.tab.active{
+    background:#2563eb;
+    color:white;
+}
+
+
+/* =========================
+   APPOINTMENT CARD
+========================= */
+
+.card{
+    background:white;
+    padding:20px;
+    margin-bottom:15px;
+    border-radius:10px;
+    box-shadow:0 3px 10px rgba(0,0,0,.08);
+}
+
+.card h3{
+    color:#2563eb;
+    margin-bottom:15px;
+}
+
+.card p{
+    margin:8px 0;
+}
+
+
+/* =========================
+   STATUS
+========================= */
+
+.status{
+    display:inline-block;
+    padding:5px 10px;
+    border-radius:5px;
+    font-weight:bold;
+    font-size:13px;
+}
+
+.status-pending{
+    background:#fef3c7;
+    color:#92400e;
+}
+
+.status-scheduled{
+    background:#dbeafe;
+    color:#1d4ed8;
+}
+
+.status-completed{
+    background:#dcfce7;
+    color:#166534;
+}
+
+.status-cancelled{
+    background:#fee2e2;
+    color:#991b1b;
+}
+
+
+/* =========================
+   ASSIGN BOX
+========================= */
+
+.assign-box{
+    margin-top:20px;
+    padding:15px;
+    background:#f8fafc;
+    border-radius:8px;
+    border:1px solid #dbe3ef;
+}
+
+.assign-box h4{
+    margin-top:0;
+    color:#2563eb;
+}
+
+.assign-box label{
+    display:block;
+    margin-top:10px;
+    margin-bottom:5px;
+    font-weight:bold;
+}
+
+.assign-box input{
+    width:100%;
+    padding:10px;
+    box-sizing:border-box;
+    border:1px solid #cbd5e1;
+    border-radius:6px;
+}
+
+.button-row{
+    display:flex;
+    gap:10px;
+    margin-top:15px;
+}
+
+.confirm-btn,
+.reject-btn{
+    border:none;
+    padding:10px 16px;
+    border-radius:6px;
+    cursor:pointer;
+    color:white;
+}
+
+.confirm-btn{
+    background:#16a34a;
+}
+
+.reject-btn{
+    background:#dc2626;
+}
+
+
+/* =========================
+   MESSAGES
+========================= */
+
+.message{
+    margin-top:10px;
+    font-weight:bold;
+}
+
+.error{
+    color:red;
+    text-align:center;
+}
+
+.success{
+    color:#16a34a;
+}
+
+.info{
+    color:#64748b;
+    font-size:14px;
+}
+
+.loading{
+    text-align:center;
+    color:#64748b;
+}
+
+.hidden{
+    display:none;
+}
+
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media(max-width:600px){
+
+    header{
+        padding:15px 20px;
+    }
+
+    .container{
+        padding:20px;
+    }
+
+    .button-row{
+        flex-direction:column;
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<header>
+
+    <h2>Appointments</h2>
+
+    <button onclick="goBack()">
+        Dashboard
+    </button>
+
+</header>
+
+
+<div class="container">
+
+
+    <!-- =========================
+         BOOK APPOINTMENT
+    ========================== -->
+
+    <div
+        class="booking-box"
+        id="bookingSection"
+    >
+
+        <h2>📅 Book an Appointment</h2>
+
+        <p>
+            Select a doctor and enter the reason for your appointment.
+            The hospital staff will assign the date and time after reviewing your request.
+        </p>
+
+
+        <label for="doctorSelect">
+            Select Doctor
+        </label>
+
+        <select id="doctorSelect">
+
+            <option value="">
+                Loading doctors...
+            </option>
+
+        </select>
+
+
+        <label for="reason">
+            Reason for Appointment
+        </label>
+
+        <textarea
+            id="reason"
+            placeholder="Enter the reason for your appointment..."
+        ></textarea>
+
+
+        <button
+            class="book-btn"
+            onclick="bookAppointment()"
+        >
+            Book Appointment
+        </button>
+
+
+        <div
+            id="bookingMessage"
+            class="booking-message"
+        ></div>
+
+    </div>
+
+
+    <!-- =========================
+         TABS
+    ========================== -->
+
+    <div class="tabs">
+
+        <button
+            class="tab active"
+            onclick="loadAppointments('recent', this)"
+        >
+            Recent
+        </button>
+
+        <button
+            class="tab"
+            onclick="loadAppointments('pending', this)"
+        >
+            Pending
+        </button>
+
+        <button
+            class="tab"
+            onclick="loadAppointments('scheduled', this)"
+        >
+            Scheduled
+        </button>
+
+        <button
+            class="tab"
+            onclick="loadAppointments('completed', this)"
+        >
+            Completed
+        </button>
+
+        <button
+            class="tab"
+            onclick="loadAppointments('cancelled', this)"
+        >
+            Cancelled
+        </button>
+
+        <button
+            class="tab"
+            onclick="loadAppointments('my', this)"
+            id="myAppointmentsTab"
+        >
+            My Appointments
+        </button>
+
+    </div>
+
+
+    <!-- =========================
+         APPOINTMENT LIST
+    ========================== -->
+
+    <div id="appointmentList">
+
+        <p class="loading">
+            Loading appointments...
+        </p>
+
+    </div>
+
+
+</div>
+
+
+<script>
+
+
+/* =========================
+   AUTH
+========================= */
+
+const token =
+    localStorage.getItem("access_token");
+
+const role =
+    localStorage.getItem("role");
+
+
+if(!token){
+
+    window.location = "index.html";
+
+}
+
+
+/* =========================
+   BACK TO DASHBOARD
+========================= */
+
+function goBack(){
+
+    if(role === "admin"){
+
+        window.location = "admin-dashboard.html";
+
+    }
+
+    else if(role === "staff"){
+
+        window.location = "staff-dashboard.html";
+
+    }
+
+    else if(role === "doctor"){
+
+        window.location = "doctor-dashboard.html";
+
+    }
+
+    else{
+
+        window.location = "dashboard.html";
+
+    }
+
+}
+
+
+/* =========================
+   BOOKING SECTION
+   ONLY FOR PATIENTS
+========================= */
+
+if(role !== "user"){
+
+    document.getElementById(
+        "bookingSection"
+    ).classList.add("hidden");
+
+}
+
+
+/* =========================
+   HIDE MY APPOINTMENTS
+   FOR NON-DOCTORS
+========================= */
+
+if(role !== "doctor"){
+
+    document.getElementById(
+        "myAppointmentsTab"
+    ).style.display = "none";
+
+}
+
+
+/* =========================
+   LOAD DOCTORS
+========================= */
+
+async function loadDoctors(){
+
+    if(role !== "user"){
+        return;
+    }
+
+
+    const doctorSelect =
+        document.getElementById(
+            "doctorSelect"
+        );
+
+
+    try{
+
+        const response =
+            await fetch(
+                "http://127.0.0.1:8000/doctors",
+                {
+                    method:"GET",
+
+                    headers:{
+                        "Authorization":
+                            "Bearer " + token
+                    }
+                }
+            );
+
+
+        if(!response.ok){
+
+            doctorSelect.innerHTML =
+                `<option value="">
+                    Could not load doctors
+                </option>`;
+
+            return;
+
+        }
+
+
+        const doctors =
+            await response.json();
+
+
+        doctorSelect.innerHTML =
+            `<option value="">
+                -- Select a Doctor --
+            </option>`;
+
+
+        if(
+            !doctors ||
+            doctors.length === 0
+        ){
+
+            doctorSelect.innerHTML =
+                `<option value="">
+                    No doctors available
+                </option>`;
+
+            return;
+
+        }
+
+
+        /* =========================
+           ADD ALL 22 DOCTORS
+        ========================== */
+
+        doctors.forEach(
+            doctor => {
+
+                const option =
+                    document.createElement(
+                        "option"
+                    );
+
+
+                option.value =
+                    doctor.id;
+
+
+                option.textContent =
+                    `${doctor.name} — ${doctor.specialization}`;
+
+
+                doctorSelect.appendChild(
+                    option
+                );
+
+            }
+        );
+
+    }
+
+
+    catch(error){
+
+        console.error(error);
+
+        doctorSelect.innerHTML =
+            `<option value="">
+                Could not connect to server
+            </option>`;
+
+    }
+
+}
+
+
+/* =========================
+   BOOK APPOINTMENT
+========================= */
+
+async function bookAppointment(){
+
+    const doctorSelect =
+        document.getElementById(
+            "doctorSelect"
+        );
+
+
+    const reasonInput =
+        document.getElementById(
+            "reason"
+        );
+
+
+    const message =
+        document.getElementById(
+            "bookingMessage"
+        );
+
+
+    const doctorId =
+        doctorSelect.value;
+
+
+    const reason =
+        reasonInput.value.trim();
+
+
+    /* =========================
+       VALIDATION
+    ========================== */
+
+    if(!doctorId){
+
+        message.className =
+            "booking-message error";
+
+        message.innerText =
+            "Please select a doctor.";
+
+        return;
+
+    }
+
+
+    if(!reason){
+
+        message.className =
+            "booking-message error";
+
+        message.innerText =
+            "Please enter the reason for your appointment.";
+
+        return;
+
+    }
+
+
+    message.className =
+        "booking-message";
+
+
+    message.style.color =
+        "#64748b";
+
+
+    message.innerText =
+        "Booking appointment...";
+
+
+    /* =========================
+       API REQUEST
+    ========================== */
+
+    try{
+
+        const response =
+            await fetch(
+                "http://127.0.0.1:8000/appointments",
+                {
+                    method:"POST",
+
+                    headers:{
+
+                        "Content-Type":
+                            "application/json",
+
+                        "Authorization":
+                            "Bearer " + token
+
+                    },
+
+                    body:JSON.stringify({
+
+                        doctor_id:
+                            parseInt(doctorId),
+
+                        reason:
+                            reason
+
+                    })
+
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        /* =========================
+           ERROR
+        ========================== */
+
+        if(!response.ok){
+
+            message.className =
+                "booking-message error";
+
+            message.innerText =
+                data.detail ||
+                "Could not book appointment.";
+
+            return;
+
+        }
+
+
+        /* =========================
+           SUCCESS
+        ========================== */
+
+        message.className =
+            "booking-message success";
+
+        message.innerText =
+            "Appointment request submitted successfully!";
+
+
+        /* Clear form */
+
+        doctorSelect.value = "";
+
+        reasonInput.value = "";
+
+
+        /* Refresh appointments */
+
+        setTimeout(
+            () => {
+
+                loadAppointments(
+                    "recent"
+                );
+
+            },
+            500
+        );
+
+    }
+
+
+    catch(error){
+
+        console.error(error);
+
+        message.className =
+            "booking-message error";
+
+        message.innerText =
+            "Could not connect to the server.";
+
+    }
+
+}
+
+
+/* =========================
+   LOAD APPOINTMENTS
+========================= */
+
+async function loadAppointments(
+    section = "recent",
+    clickedButton = null
+){
+
+    const list =
+        document.getElementById(
+            "appointmentList"
+        );
+
+
+    /* =========================
+       ACTIVE TAB
+    ========================== */
+
+    document
+        .querySelectorAll(".tab")
+        .forEach(button => {
+
+            button.classList.remove("active");
+
+        });
+
+
+    if(clickedButton){
+
+        clickedButton.classList.add("active");
+
+    }
+
+
+    list.innerHTML = `
+        <p class="loading">
+            Loading appointments...
+        </p>
+    `;
+
+
+    try{
+
+
+        /* =========================
+           API URL
+        ========================== */
+
+        let url;
+
+
+        if(section === "recent"){
+
+            url =
+                "http://127.0.0.1:8000/appointments/recent";
+
+        }
+
+        else if(section === "my"){
+
+            url =
+                "http://127.0.0.1:8000/appointments/my";
+
+        }
+
+        else{
+
+            url =
+                "http://127.0.0.1:8000/appointments?section="
+                + section;
+
+        }
+
+
+        /* =========================
+           API REQUEST
+        ========================== */
+
+        const response =
+            await fetch(
+                url,
+                {
+                    method:"GET",
+
+                    headers:{
+                        "Authorization":
+                            "Bearer " + token
+                    }
+                }
+            );
+
+
+        if(!response.ok){
+
+            const errorText =
+                await response.text();
+
+            console.error(errorText);
+
+            list.innerHTML =
+                '<p class="error">Could not load appointments.</p>';
+
+            return;
+
+        }
+
+
+        const appointments =
+            await response.json();
+
+
+        /* =========================
+           EMPTY RESULT
+        ========================== */
+
+        if(
+            !appointments ||
+            appointments.length === 0
+        ){
+
+            list.innerHTML =
+                "<p>No appointments found.</p>";
+
+            return;
+
+        }
+
+
+        list.innerHTML = "";
+
+
+        /* =========================
+           DISPLAY APPOINTMENTS
+        ========================== */
+
+        appointments.forEach(
+            appointment => {
+
+
+                const dateText =
+                    appointment.date ||
+                    "Not assigned yet";
+
+
+                const timeText =
+                    appointment.time ||
+                    "Not assigned yet";
+
+
+                const status =
+                    appointment.status ||
+                    "pending";
+
+
+                let assignmentSection = "";
+
+
+                /* =========================
+                   STAFF ASSIGNMENT
+                ========================== */
+
+                if(
+                    role === "staff" &&
+                    status === "pending"
+                ){
+
+                    assignmentSection = `
+
+                        <div class="assign-box">
+
+                            <h4>
+                                Assign Appointment
+                            </h4>
+
+
+                            <label>
+                                Date
+                            </label>
+
+                            <input
+                                type="date"
+                                id="date-${appointment.id}"
+                            >
+
+
+                            <label>
+                                Time
+                            </label>
+
+                            <input
+                                type="time"
+                                id="time-${appointment.id}"
+                            >
+
+
+                            <div class="button-row">
+
+
+                                <button
+                                    class="confirm-btn"
+                                    onclick="assignAppointment(
+                                        ${appointment.id},
+                                        'scheduled'
+                                    )"
+                                >
+                                    Confirm Appointment
+                                </button>
+
+
+                                <button
+                                    class="reject-btn"
+                                    onclick="assignAppointment(
+                                        ${appointment.id},
+                                        'cancelled'
+                                    )"
+                                >
+                                    Reject Appointment
+                                </button>
+
+
+                            </div>
+
+
+                            <div
+                                id="message-${appointment.id}"
+                                class="message"
+                            ></div>
+
+                        </div>
+
+                    `;
+
+                }
+
+
+                /* =========================
+                   CARD
+                ========================== */
+
+                list.innerHTML += `
+
+                    <div class="card">
+
+
+                        <h3>
+                            Appointment #${appointment.id}
+                        </h3>
+
+
+                        <p>
+                            <b>Patient:</b>
+                            ${appointment.patient_name || "N/A"}
+                        </p>
+
+
+                        <p class="info">
+                            Patient ID:
+                            ${appointment.patient_id}
+                        </p>
+
+
+                        <p>
+                            <b>Doctor:</b>
+                            ${appointment.doctor_name || "N/A"}
+                        </p>
+
+
+                        <p class="info">
+                            Doctor ID:
+                            ${appointment.doctor_id}
+                        </p>
+
+
+                        <p>
+                            <b>Date:</b>
+                            ${dateText}
+                        </p>
+
+
+                        <p>
+                            <b>Time:</b>
+                            ${timeText}
+                        </p>
+
+
+                        <p>
+                            <b>Reason:</b>
+                            ${appointment.reason || "N/A"}
+                        </p>
+
+
+                        <p>
+
+                            <b>Status:</b>
+
+                            <span
+                                class="status status-${status}"
+                            >
+                                ${status.toUpperCase()}
+                            </span>
+
+                        </p>
+
+
+                        ${assignmentSection}
+
+
+                    </div>
+
+                `;
+
+            }
+        );
+
+    }
+
+
+    catch(error){
+
+        console.error(error);
+
+        list.innerHTML =
+            '<p class="error">Could not connect to the server.</p>';
+
+    }
+
+}
+
+
+/* =========================
+   ASSIGN APPOINTMENT
+========================= */
+
+async function assignAppointment(
+    appointmentId,
+    status
+){
+
+    const dateInput =
+        document.getElementById(
+            `date-${appointmentId}`
+        );
+
+
+    const timeInput =
+        document.getElementById(
+            `time-${appointmentId}`
+        );
+
+
+    const message =
+        document.getElementById(
+            `message-${appointmentId}`
+        );
+
+
+    const date =
+        dateInput.value;
+
+
+    const time =
+        timeInput.value;
+
+
+    /* =========================
+       VALIDATION
+    ========================== */
+
+    if(status === "scheduled"){
+
+        if(!date){
+
+            message.className =
+                "message error";
+
+            message.innerText =
+                "Please select a date.";
+
+            return;
+
+        }
+
+
+        if(!time){
+
+            message.className =
+                "message error";
+
+            message.innerText =
+                "Please select a time.";
+
+            return;
+
+        }
+
+    }
+
+
+    /* =========================
+       API REQUEST
+    ========================== */
+
+    try{
+
+
+        const response =
+            await fetch(
+                `http://127.0.0.1:8000/appointments/${appointmentId}/assign`,
+                {
+                    method:"PUT",
+
+                    headers:{
+
+                        "Content-Type":
+                            "application/json",
+
+                        "Authorization":
+                            "Bearer " + token
+
+                    },
+
+                    body:JSON.stringify({
+
+                        date:
+                            date || null,
+
+                        time:
+                            time || null,
+
+                        status:
+                            status
+
+                    })
+
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        /* =========================
+           ERROR
+        ========================== */
+
+        if(!response.ok){
+
+            message.className =
+                "message error";
+
+            message.innerText =
+                data.detail ||
+                "Could not update appointment.";
+
+            return;
+
+        }
+
+
+        /* =========================
+           SUCCESS
+        ========================== */
+
+        message.className =
+            "message success";
+
+
+        message.innerText =
+            "Appointment updated successfully.";
+
+
+        setTimeout(
+            () => {
+
+                loadAppointments(
+                    "pending"
+                );
+
+            },
+            800
+        );
+
+    }
+
+
+    catch(error){
+
+        console.error(error);
+
+        message.className =
+            "message error";
+
+        message.innerText =
+            "Could not connect to the server.";
+
+    }
+
+}
+
+
+/* =========================
+   START
+========================= */
+
+loadDoctors();
+
+loadAppointments("recent");
+
+
+</script>
+
+
+</body>
+
+</html>

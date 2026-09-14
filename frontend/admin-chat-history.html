@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Admin Chat History</title>
+
+<style>
+
+*{
+    box-sizing:border-box;
+    font-family:Arial, Helvetica, sans-serif;
+}
+
+body{
+    margin:0;
+    background:#eef3fb;
+}
+
+header{
+    background:#2563eb;
+    color:white;
+    padding:18px 30px;
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+header button{
+    background:white;
+    color:#2563eb;
+    border:none;
+    padding:9px 15px;
+    border-radius:6px;
+    cursor:pointer;
+}
+
+.container{
+    max-width:1100px;
+    margin:auto;
+    padding:30px;
+}
+
+.chat-card{
+    background:white;
+    padding:20px;
+    margin-bottom:18px;
+    border-radius:12px;
+
+    box-shadow:0 3px 12px rgba(0,0,0,.08);
+}
+
+.chat-card h3{
+    color:#2563eb;
+    margin-top:0;
+}
+
+.question{
+    background:#f1f5f9;
+    padding:12px;
+    border-radius:8px;
+    margin-bottom:12px;
+}
+
+.answer{
+    background:#eff6ff;
+    padding:12px;
+    border-radius:8px;
+}
+
+.user-id{
+    color:#555;
+    font-size:14px;
+    margin-bottom:15px;
+}
+
+.error{
+    color:red;
+    text-align:center;
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<header>
+
+    <h2>Admin - Chat History</h2>
+
+    <button onclick="window.location.href='admin-dashboard.html'">
+        Dashboard
+    </button>
+
+</header>
+
+
+<div class="container">
+
+    <h2>All User Conversations</h2>
+
+    <div id="chatHistory">
+        Loading chat history...
+    </div>
+
+</div>
+
+
+<script>
+
+const token = localStorage.getItem("access_token");
+
+const role = localStorage.getItem("role");
+
+
+/* Check login */
+
+if(!token || role !== "admin"){
+
+    window.location.href = "index.html";
+
+}
+
+
+/* Load all chat history */
+
+async function loadChatHistory(){
+
+    try{
+
+        const response = await fetch(
+            "http://127.0.0.1:8000/admin/chat-history",
+            {
+                method:"GET",
+
+                headers:{
+                    "Authorization":"Bearer " + token
+                }
+            }
+        );
+
+
+        if(!response.ok){
+
+            document.getElementById("chatHistory").innerHTML =
+                '<p class="error">Could not load chat history.</p>';
+
+            return;
+
+        }
+
+
+        const history = await response.json();
+
+
+        const container =
+            document.getElementById("chatHistory");
+
+
+        container.innerHTML = "";
+
+
+        if(history.length === 0){
+
+            container.innerHTML =
+                "<p>No chat history found.</p>";
+
+            return;
+
+        }
+
+
+        history.forEach(chat => {
+
+            container.innerHTML += `
+
+                <div class="chat-card">
+
+                    <h3>
+                        Conversation #${chat.id}
+                    </h3>
+
+                    <div class="user-id">
+                        <b>User ID:</b> ${chat.user_id}
+                    </div>
+
+
+                    <div class="question">
+
+                        <b>Question:</b>
+
+                        <p>
+                            ${chat.question}
+                        </p>
+
+                    </div>
+
+
+                    <div class="answer">
+
+                        <b>AI Answer:</b>
+
+                        <p>
+                            ${chat.answer}
+                        </p>
+
+                    </div>
+
+                </div>
+
+            `;
+
+        });
+
+    }
+
+    catch(error){
+
+        console.error(error);
+
+        document.getElementById("chatHistory").innerHTML =
+            '<p class="error">Could not connect to the server.</p>';
+
+    }
+
+}
+
+
+loadChatHistory();
+
+</script>
+
+
+</body>
+
+</html>

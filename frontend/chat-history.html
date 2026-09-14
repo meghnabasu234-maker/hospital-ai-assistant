@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Chat History</title>
+
+<style>
+
+body{
+    font-family:Arial, Helvetica, sans-serif;
+    background:#eef3fb;
+    margin:0;
+}
+
+header{
+    background:#2563eb;
+    color:white;
+    padding:18px 25px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+header button{
+    background:white;
+    color:#2563eb;
+    border:none;
+    padding:8px 15px;
+    border-radius:6px;
+    cursor:pointer;
+}
+
+.container{
+    max-width:1000px;
+    margin:auto;
+    padding:25px;
+}
+
+.chat-card{
+    background:white;
+    padding:20px;
+    margin-bottom:18px;
+    border-radius:10px;
+    box-shadow:0 3px 10px rgba(0,0,0,.08);
+}
+
+.question{
+    color:#2563eb;
+    font-weight:bold;
+    margin-bottom:12px;
+}
+
+.answer{
+    background:#f3f4f6;
+    padding:15px;
+    border-radius:8px;
+    white-space:pre-wrap;
+}
+
+.empty{
+    text-align:center;
+    color:#666;
+}
+
+.error{
+    text-align:center;
+    color:red;
+}
+
+</style>
+</head>
+
+<body>
+
+<header>
+
+    <h2>Chat History</h2>
+
+    <button onclick="window.location='dashboard.html'">
+        Dashboard
+    </button>
+
+</header>
+
+
+<div class="container">
+
+    <div id="history">
+        Loading chat history...
+    </div>
+
+</div>
+
+
+<script>
+
+const token = localStorage.getItem("access_token");
+
+if(!token){
+    window.location="index.html";
+}
+
+
+async function loadChatHistory(){
+
+    try{
+
+        const response = await fetch(
+            "http://127.0.0.1:8000/chat-history",
+            {
+                headers:{
+                    "Authorization":"Bearer " + token
+                }
+            }
+        );
+
+
+        if(!response.ok){
+
+            document.getElementById("history").innerHTML =
+                '<p class="error">Could not load chat history.</p>';
+
+            return;
+        }
+
+
+        const chats = await response.json();
+
+        const history =
+            document.getElementById("history");
+
+
+        history.innerHTML = "";
+
+
+        if(chats.length === 0){
+
+            history.innerHTML =
+                '<p class="empty">No chat history found.</p>';
+
+            return;
+        }
+
+
+        chats.forEach(chat => {
+
+            history.innerHTML += `
+
+                <div class="chat-card">
+
+                    <div class="question">
+                        Question:
+                    </div>
+
+                    <p>
+                        ${chat.question}
+                    </p>
+
+
+                    <div class="question">
+                        AI Assistant:
+                    </div>
+
+                    <div class="answer">
+                        ${chat.answer}
+                    </div>
+
+                </div>
+
+            `;
+
+        });
+
+    }
+
+    catch(error){
+
+        console.error(error);
+
+        document.getElementById("history").innerHTML =
+            '<p class="error">Could not connect to the server.</p>';
+
+    }
+
+}
+
+
+loadChatHistory();
+
+</script>
+
+</body>
+</html>

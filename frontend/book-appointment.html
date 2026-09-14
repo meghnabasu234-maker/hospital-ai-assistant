@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
+
+<title>Book Appointment</title>
+
+
+<style>
+
+body{
+    font-family:Arial, Helvetica, sans-serif;
+    background:#eef3fb;
+    margin:0;
+}
+
+
+header{
+    background:#2563eb;
+    color:white;
+    padding:18px 25px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+
+header button{
+    background:white;
+    color:#2563eb;
+    border:none;
+    padding:8px 15px;
+    border-radius:6px;
+    cursor:pointer;
+}
+
+
+.container{
+    max-width:650px;
+    margin:40px auto;
+    padding:25px;
+}
+
+
+.card{
+    background:white;
+    padding:30px;
+    border-radius:12px;
+    box-shadow:0 3px 12px rgba(0,0,0,.08);
+}
+
+
+h2{
+    color:#2563eb;
+    margin-top:0;
+}
+
+
+label{
+    display:block;
+    margin-top:18px;
+    margin-bottom:7px;
+    font-weight:bold;
+}
+
+
+input,
+select,
+textarea{
+    width:100%;
+    padding:11px;
+    border:1px solid #cbd5e1;
+    border-radius:7px;
+    box-sizing:border-box;
+    font-size:15px;
+}
+
+
+textarea{
+    min-height:100px;
+    resize:vertical;
+}
+
+
+button.book-btn{
+    width:100%;
+    margin-top:25px;
+    padding:12px;
+    border:none;
+    border-radius:7px;
+    background:#2563eb;
+    color:white;
+    font-size:16px;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+
+button.book-btn:hover{
+    background:#1d4ed8;
+}
+
+
+.message{
+    margin-top:18px;
+    padding:12px;
+    border-radius:7px;
+    display:none;
+}
+
+
+.success{
+    display:block;
+    background:#dcfce7;
+    color:#166534;
+}
+
+
+.error{
+    display:block;
+    background:#fee2e2;
+    color:#991b1b;
+}
+
+
+.info{
+    color:#64748b;
+    font-size:14px;
+    margin-top:5px;
+}
+
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<header>
+
+    <h2>Book Appointment</h2>
+
+    <button onclick="goBack()">
+        Dashboard
+    </button>
+
+</header>
+
+
+<div class="container">
+
+
+    <div class="card">
+
+        <h2>
+            Book an Appointment
+        </h2>
+
+        <p class="info">
+            Submit your appointment request.
+            The request will remain pending until
+            hospital staff schedules it.
+        </p>
+
+
+        <!-- =========================
+             DOCTOR
+        ========================== -->
+
+        <label for="doctor">
+            Doctor
+        </label>
+
+        <select id="doctor">
+
+            <option value="">
+                Loading doctors...
+            </option>
+
+        </select>
+
+
+        <!-- =========================
+             DATE
+        ========================== -->
+
+        <label for="date">
+            Preferred Date
+        </label>
+
+        <input
+            type="date"
+            id="date"
+        >
+
+
+        <!-- =========================
+             TIME
+        ========================== -->
+
+        <label for="time">
+            Preferred Time
+        </label>
+
+        <input
+            type="time"
+            id="time"
+        >
+
+
+        <!-- =========================
+             REASON
+        ========================== -->
+
+        <label for="reason">
+            Reason for Appointment
+        </label>
+
+        <textarea
+            id="reason"
+            placeholder="Enter the reason for your appointment"
+        ></textarea>
+
+
+        <!-- =========================
+             BOOK BUTTON
+        ========================== -->
+
+        <button
+            class="book-btn"
+            onclick="bookAppointment()"
+        >
+            Book Appointment
+        </button>
+
+
+        <div
+            id="message"
+            class="message"
+        ></div>
+
+
+    </div>
+
+</div>
+
+
+<script>
+
+
+/* =========================
+   AUTH
+========================= */
+
+const token =
+    localStorage.getItem("access_token");
+
+const role =
+    localStorage.getItem("role");
+
+
+if(!token){
+
+    window.location = "index.html";
+
+}
+
+
+/* =========================
+   PATIENT ONLY
+========================= */
+
+if(role !== "user"){
+
+    document.body.innerHTML = `
+
+        <div style="
+            text-align:center;
+            margin-top:100px;
+            font-family:Arial;
+        ">
+
+            <h2>
+                Access Denied
+            </h2>
+
+            <p>
+                Only patients can book appointments.
+            </p>
+
+        </div>
+
+    `;
+
+}
+
+
+/* =========================
+   BACK TO DASHBOARD
+========================= */
+
+function goBack(){
+
+    window.location =
+        "dashboard.html";
+
+}
+
+
+/* =========================
+   SET MINIMUM DATE
+========================= */
+
+const dateInput =
+    document.getElementById("date");
+
+
+const today =
+    new Date()
+        .toISOString()
+        .split("T")[0];
+
+
+dateInput.min = today;
+
+
+/* =========================
+   LOAD DOCTORS
+========================= */
+
+async function loadDoctors(){
+
+    const doctorSelect =
+        document.getElementById("doctor");
+
+
+    try{
+
+        const response =
+            await fetch(
+                "http://127.0.0.1:8000/doctors",
+                {
+                    method:"GET",
+
+                    headers:{
+                        "Authorization":
+                            "Bearer " + token
+                    }
+                }
+            );
+
+
+        if(!response.ok){
+
+            doctorSelect.innerHTML = `
+
+                <option value="">
+                    Could not load doctors
+                </option>
+
+            `;
+
+            return;
+
+        }
+
+
+        const doctors =
+            await response.json();
+
+
+        doctorSelect.innerHTML = `
+
+            <option value="">
+                Select a doctor
+            </option>
+
+        `;
+
+
+        if(
+            !doctors ||
+            doctors.length === 0
+        ){
+
+            doctorSelect.innerHTML += `
+
+                <option value="">
+                    No doctors available
+                </option>
+
+            `;
+
+            return;
+
+        }
+
+
+        doctors.forEach(doctor => {
+
+            doctorSelect.innerHTML += `
+
+                <option value="${doctor.id}">
+                    Dr. ${doctor.name}
+                </option>
+
+            `;
+
+        });
+
+    }
+
+
+    catch(error){
+
+        console.error(error);
+
+        doctorSelect.innerHTML = `
+
+            <option value="">
+                Could not connect to server
+            </option>
+
+        `;
+
+    }
+
+}
+
+
+/* =========================
+   SHOW MESSAGE
+========================= */
+
+function showMessage(
+    text,
+    type
+){
+
+    const message =
+        document.getElementById(
+            "message"
+        );
+
+
+    message.className =
+        "message " + type;
+
+
+    message.innerText =
+        text;
+
+}
+
+
+/* =========================
+   BOOK APPOINTMENT
+========================= */
+
+async function bookAppointment(){
+
+
+    const doctor =
+        document.getElementById(
+            "doctor"
+        ).value;
+
+
+    const date =
+        document.getElementById(
+            "date"
+        ).value;
+
+
+    const time =
+        document.getElementById(
+            "time"
+        ).value;
+
+
+    const reason =
+        document.getElementById(
+            "reason"
+        ).value.trim();
+
+
+    /* =========================
+       VALIDATION
+    ========================== */
+
+    if(!doctor){
+
+        showMessage(
+            "Please select a doctor.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    if(!date){
+
+        showMessage(
+            "Please select a date.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    if(!time){
+
+        showMessage(
+            "Please select a time.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    if(!reason){
+
+        showMessage(
+            "Please enter the reason for your appointment.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    /* =========================
+       APPOINTMENT DATA
+    ========================== */
+
+    const appointmentData = {
+
+        doctor_id:
+            parseInt(doctor),
+
+        date:
+            date,
+
+        time:
+            time,
+
+        reason:
+            reason,
+
+        status:
+            "pending"
+
+    };
+
+
+    try{
+
+
+        const response =
+            await fetch(
+                "http://127.0.0.1:8000/appointments",
+                {
+                    method:"POST",
+
+                    headers:{
+
+                        "Content-Type":
+                            "application/json",
+
+                        "Authorization":
+                            "Bearer " + token
+
+                    },
+
+                    body:
+                        JSON.stringify(
+                            appointmentData
+                        )
+
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        /* =========================
+           ERROR
+        ========================== */
+
+        if(!response.ok){
+
+            showMessage(
+                data.detail ||
+                "Could not book appointment.",
+                "error"
+            );
+
+            return;
+
+        }
+
+
+        /* =========================
+           SUCCESS
+        ========================== */
+
+        showMessage(
+            "Appointment request submitted successfully! Status: Pending.",
+            "success"
+        );
+
+
+        /* =========================
+           CLEAR FORM
+        ========================== */
+
+        document.getElementById(
+            "doctor"
+        ).value = "";
+
+
+        document.getElementById(
+            "date"
+        ).value = "";
+
+
+        document.getElementById(
+            "time"
+        ).value = "";
+
+
+        document.getElementById(
+            "reason"
+        ).value = "";
+
+
+        /* =========================
+           GO TO APPOINTMENTS
+        ========================== */
+
+        setTimeout(
+            () => {
+
+                window.location =
+                    "appointments.html";
+
+            },
+            1500
+        );
+
+    }
+
+
+    catch(error){
+
+        console.error(error);
+
+        showMessage(
+            "Could not connect to the server.",
+            "error"
+        );
+
+    }
+
+}
+
+
+/* =========================
+   START
+========================= */
+
+if(role === "user"){
+
+    loadDoctors();
+
+}
+
+</script>
+
+
+</body>
+
+</html>

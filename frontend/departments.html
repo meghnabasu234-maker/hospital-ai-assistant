@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Departments</title>
+
+<style>
+body{
+    font-family:Arial;
+    background:#eef3fb;
+    margin:0;
+}
+header{
+    background:#2563eb;
+    color:white;
+    padding:18px 25px;
+    display:flex;
+    justify-content:space-between;
+}
+button{
+    background:white;
+    color:#2563eb;
+    border:none;
+    padding:8px 15px;
+    border-radius:6px;
+    cursor:pointer;
+}
+.container{
+    padding:25px;
+}
+.card{
+    background:white;
+    padding:18px;
+    margin-bottom:15px;
+    border-radius:10px;
+    box-shadow:0 3px 10px rgba(0,0,0,.08);
+}
+.title{
+    font-size:22px;
+    color:#2563eb;
+    font-weight:bold;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h2>Departments</h2>
+    <button onclick="window.location='dashboard.html'">
+        Dashboard
+    </button>
+</header>
+
+<div class="container" id="departmentList"></div>
+
+<script>
+
+const token = localStorage.getItem("access_token");
+
+if(!token){
+    window.location="index.html";
+}
+
+async function loadDepartments(){
+
+    const response = await fetch(
+        "http://127.0.0.1:8000/departments",
+        {
+            headers:{
+                Authorization:"Bearer "+token
+            }
+        }
+    );
+
+    const departments = await response.json();
+
+    const list=document.getElementById("departmentList");
+
+    list.innerHTML="";
+
+    departments.forEach(dep=>{
+
+        list.innerHTML += `
+            <div class="card">
+
+                <div class="title">
+                    ${dep.name}
+                </div>
+
+                <p>${dep.description}</p>
+
+            </div>
+        `;
+
+    });
+
+}
+
+loadDepartments();
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Create Account</title>
+
+<style>
+
+*{
+    box-sizing:border-box;
+    font-family:Arial, Helvetica, sans-serif;
+}
+
+body{
+    margin:0;
+    background:#eef3fb;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    min-height:100vh;
+}
+
+.container{
+    background:white;
+    width:420px;
+    padding:35px;
+
+    border-radius:12px;
+
+    box-shadow:0 4px 15px rgba(0,0,0,.1);
+}
+
+h2{
+    text-align:center;
+    color:#2563eb;
+    margin-bottom:25px;
+}
+
+input,
+select{
+    width:100%;
+    padding:12px;
+
+    margin-bottom:15px;
+
+    border:1px solid #d1d5db;
+    border-radius:6px;
+
+    font-size:15px;
+
+    background:white;
+}
+
+
+/* ROLE SELECTION */
+
+.role-title{
+    color:#475569;
+
+    font-size:14px;
+
+    font-weight:bold;
+
+    margin-bottom:10px;
+}
+
+.role-options{
+    display:flex;
+
+    gap:8px;
+
+    margin-bottom:20px;
+}
+
+.role-option{
+    flex:1;
+}
+
+.role-option input{
+    display:none;
+}
+
+.role-option label{
+    display:block;
+
+    text-align:center;
+
+    padding:10px 5px;
+
+    border:1px solid #d1d5db;
+
+    border-radius:7px;
+
+    color:#475569;
+
+    font-size:13px;
+
+    font-weight:bold;
+
+    cursor:pointer;
+
+    transition:.2s;
+}
+
+.role-option label:hover{
+    border-color:#2563eb;
+}
+
+.role-option input:checked + label{
+    background:#2563eb;
+
+    color:white;
+
+    border-color:#2563eb;
+}
+
+
+/* SUBTYPE */
+
+.subtype-section{
+    display:none;
+}
+
+.subtype-title{
+    color:#475569;
+
+    font-size:14px;
+
+    font-weight:bold;
+
+    margin-bottom:8px;
+}
+
+
+button{
+    width:100%;
+    padding:12px;
+
+    background:#2563eb;
+    color:white;
+
+    border:none;
+    border-radius:6px;
+
+    font-size:16px;
+
+    cursor:pointer;
+}
+
+button:hover{
+    background:#1d4ed8;
+}
+
+.message{
+    text-align:center;
+    margin-top:15px;
+    font-size:14px;
+}
+
+.login-link{
+    text-align:center;
+    margin-top:20px;
+    font-size:14px;
+}
+
+.login-link a{
+    color:#2563eb;
+    text-decoration:none;
+    font-weight:bold;
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<div class="container">
+
+    <h2>Create Account</h2>
+
+
+    <input
+        type="text"
+        id="username"
+        placeholder="Username"
+    >
+
+
+    <input
+        type="email"
+        id="email"
+        placeholder="Email"
+    >
+
+
+    <input
+        type="password"
+        id="password"
+        placeholder="Password"
+    >
+
+
+    <div class="role-title">
+        Sign Up As
+    </div>
+
+
+    <div class="role-options">
+
+        <div class="role-option">
+
+            <input
+                type="radio"
+                id="userRole"
+                name="signupRole"
+                value="user"
+                checked
+                onchange="updateFields()"
+            >
+
+            <label for="userRole">
+                User
+            </label>
+
+        </div>
+
+
+        <div class="role-option">
+
+            <input
+                type="radio"
+                id="staffRole"
+                name="signupRole"
+                value="staff"
+                onchange="updateFields()"
+            >
+
+            <label for="staffRole">
+                Staff
+            </label>
+
+        </div>
+
+
+        <div class="role-option">
+
+            <input
+                type="radio"
+                id="doctorRole"
+                name="signupRole"
+                value="doctor"
+                onchange="updateFields()"
+            >
+
+            <label for="doctorRole">
+                Doctor
+            </label>
+
+        </div>
+
+
+        <div class="role-option">
+
+            <input
+                type="radio"
+                id="adminRole"
+                name="signupRole"
+                value="admin"
+                onchange="updateFields()"
+            >
+
+            <label for="adminRole">
+                Admin
+            </label>
+
+        </div>
+
+    </div>
+
+
+    <!-- USER / PATIENT -->
+
+    <div
+        id="patientSection"
+        class="subtype-section"
+    >
+
+        <div class="subtype-title">
+            Patient Type
+        </div>
+
+        <select id="patientType">
+
+            <option value="">
+                Select Patient Type
+            </option>
+
+            <option value="New Patient">
+                New Patient
+            </option>
+
+            <option value="Existing Patient">
+                Existing Patient
+            </option>
+
+            <option value="Emergency Patient">
+                Emergency Patient
+            </option>
+
+        </select>
+
+    </div>
+
+
+    <!-- STAFF -->
+
+    <div
+        id="staffSection"
+        class="subtype-section"
+    >
+
+        <div class="subtype-title">
+            Staff Type
+        </div>
+
+        <select id="staffType">
+
+            <option value="">
+                Select Staff Type
+            </option>
+
+            <option value="Nursing Staff">
+                Nursing Staff
+            </option>
+
+            <option value="Floor / Operations Staff">
+                Floor / Operations Staff
+            </option>
+
+            <option value="Patient & Family Support Staff">
+                Patient & Family Support Staff
+            </option>
+
+            <option value="Staff Well-being Staff">
+                Staff Well-being Staff
+            </option>
+
+            <option value="Hospital Administration Staff">
+                Hospital Administration Staff
+            </option>
+
+        </select>
+
+    </div>
+
+
+    <!-- DOCTOR -->
+
+    <div
+        id="doctorSection"
+        class="subtype-section"
+    >
+
+        <div class="subtype-title">
+            Doctor Category
+        </div>
+
+        <select
+            id="doctorCategory"
+            onchange="updateSpecializations()"
+        >
+
+            <option value="">
+                Select Doctor Category
+            </option>
+
+            <option value="Primary Care & General Practice">
+                Primary Care & General Practice
+            </option>
+
+            <option value="Medical Specialist">
+                Medical Specialist
+            </option>
+
+            <option value="Acute & Diagnostic Care">
+                Acute & Diagnostic Care
+            </option>
+
+            <option value="Surgical">
+                Surgical
+            </option>
+
+        </select>
+
+
+        <div class="subtype-title">
+            Doctor Specialization
+        </div>
+
+        <select id="doctorSpecialization">
+
+            <option value="">
+                Select Specialization
+            </option>
+
+        </select>
+
+    </div>
+
+
+    <button onclick="register()">
+        Sign Up
+    </button>
+
+
+    <div
+        id="message"
+        class="message">
+    </div>
+
+
+    <div class="login-link">
+
+        Already have an account?
+
+        <a href="index.html">
+            Login
+        </a>
+
+    </div>
+
+</div>
+
+
+<script>
+
+
+/* DOCTOR SPECIALIZATIONS */
+
+const doctorSpecializations = {
+
+    "Primary Care & General Practice": [
+        "General Practitioner",
+        "Pediatrician"
+    ],
+
+    "Medical Specialist": [
+        "Cardiologist",
+        "Neurologist",
+        "Oncologist",
+        "Psychiatrist",
+        "Psychologist"
+    ],
+
+    "Acute & Diagnostic Care": [
+        "Emergency Medicine Physician",
+        "Radiologist",
+        "Pathologist"
+    ],
+
+    "Surgical": [
+        "Surgeon"
+    ]
+
+};
+
+
+/* SHOW CORRECT FIELDS */
+
+function updateFields(){
+
+    const selectedRole =
+        document.querySelector(
+            'input[name="signupRole"]:checked'
+        ).value;
+
+
+    document.getElementById(
+        "patientSection"
+    ).style.display = "none";
+
+
+    document.getElementById(
+        "staffSection"
+    ).style.display = "none";
+
+
+    document.getElementById(
+        "doctorSection"
+    ).style.display = "none";
+
+
+    if(selectedRole === "user"){
+
+        document.getElementById(
+            "patientSection"
+        ).style.display = "block";
+
+    }
+
+    else if(selectedRole === "staff"){
+
+        document.getElementById(
+            "staffSection"
+        ).style.display = "block";
+
+    }
+
+    else if(selectedRole === "doctor"){
+
+        document.getElementById(
+            "doctorSection"
+        ).style.display = "block";
+
+    }
+
+}
+
+
+/* UPDATE SPECIALIZATIONS */
+
+function updateSpecializations(){
+
+    const category =
+        document.getElementById(
+            "doctorCategory"
+        ).value;
+
+
+    const specialization =
+        document.getElementById(
+            "doctorSpecialization"
+        );
+
+
+    specialization.innerHTML =
+        '<option value="">Select Specialization</option>';
+
+
+    if(!category){
+        return;
+    }
+
+
+    doctorSpecializations[category].forEach(
+        function(item){
+
+            const option =
+                document.createElement("option");
+
+            option.value = item;
+
+            option.textContent = item;
+
+            specialization.appendChild(option);
+
+        }
+    );
+
+}
+
+
+/* REGISTER */
+
+async function register(){
+
+    const username =
+        document.getElementById(
+            "username"
+        ).value.trim();
+
+
+    const email =
+        document.getElementById(
+            "email"
+        ).value.trim();
+
+
+    const password =
+        document.getElementById(
+            "password"
+        ).value;
+
+
+    const selectedRole =
+        document.querySelector(
+            'input[name="signupRole"]:checked'
+        ).value;
+
+
+    const patientType =
+        document.getElementById(
+            "patientType"
+        ).value;
+
+
+    const staffType =
+        document.getElementById(
+            "staffType"
+        ).value;
+
+
+    const doctorCategory =
+        document.getElementById(
+            "doctorCategory"
+        ).value;
+
+
+    const doctorSpecialization =
+        document.getElementById(
+            "doctorSpecialization"
+        ).value;
+
+
+    const message =
+        document.getElementById(
+            "message"
+        );
+
+
+    if(
+        !username ||
+        !email ||
+        !password
+    ){
+
+        message.style.color = "red";
+
+        message.innerText =
+            "Please fill in all fields.";
+
+        return;
+
+    }
+
+
+    if(
+        selectedRole === "user" &&
+        !patientType
+    ){
+
+        message.style.color = "red";
+
+        message.innerText =
+            "Please select a Patient Type.";
+
+        return;
+
+    }
+
+
+    if(
+        selectedRole === "staff" &&
+        !staffType
+    ){
+
+        message.style.color = "red";
+
+        message.innerText =
+            "Please select a Staff Type.";
+
+        return;
+
+    }
+
+
+    if(
+        selectedRole === "doctor" &&
+        (
+            !doctorCategory ||
+            !doctorSpecialization
+        )
+    ){
+
+        message.style.color = "red";
+
+        message.innerText =
+            "Please select Doctor Category and Specialization.";
+
+        return;
+
+    }
+
+
+    try{
+
+        const response =
+            await fetch(
+                "http://127.0.0.1:8000/auth/register",
+                {
+                    method:"POST",
+
+                    headers:{
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body:JSON.stringify({
+
+                        username:username,
+
+                        email:email,
+
+                        password:password,
+
+                        role:selectedRole,
+
+                        staff_type:
+                            selectedRole === "staff"
+                                ? staffType
+                                : null,
+
+                        patient_type:
+                            selectedRole === "user"
+                                ? patientType
+                                : null,
+
+                        doctor_category:
+                            selectedRole === "doctor"
+                                ? doctorCategory
+                                : null,
+
+                        doctor_specialization:
+                            selectedRole === "doctor"
+                                ? doctorSpecialization
+                                : null
+
+                    })
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if(!response.ok){
+
+            message.style.color = "red";
+
+            message.innerText =
+                data.detail ||
+                "Registration failed.";
+
+            return;
+
+        }
+
+
+        message.style.color = "green";
+
+        message.innerText =
+            "Account created successfully as "
+            + selectedRole
+            + "!";
+
+
+        setTimeout(() => {
+
+            window.location.href =
+                "index.html";
+
+        }, 1200);
+
+
+    }
+
+    catch(error){
+
+        console.error(error);
+
+        message.style.color = "red";
+
+        message.innerText =
+            "Could not connect to the server.";
+
+    }
+
+}
+
+
+/* DEFAULT */
+
+updateFields();
+
+</script>
+
+
+</body>
+
+</html>

@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>MediConnect AI</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+
+            background: linear-gradient(
+                135deg,
+                #dbeafe,
+                #eff6ff,
+                #e0f2fe
+            );
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .login-box {
+            background: rgba(255, 255, 255, 0.96);
+
+            width: 400px;
+
+            padding: 40px;
+
+            border-radius: 20px;
+
+            box-shadow:
+                0 15px 40px rgba(37, 99, 235, 0.15);
+
+            text-align: center;
+        }
+
+        .logo {
+            width: 65px;
+            height: 65px;
+
+            margin: 0 auto 18px;
+
+            background: #2563eb;
+
+            color: white;
+
+            border-radius: 50%;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            font-size: 28px;
+            font-weight: bold;
+
+            box-shadow:
+                0 6px 15px rgba(37, 99, 235, 0.3);
+        }
+
+        h1 {
+            color: #1e3a8a;
+
+            font-size: 27px;
+
+            margin: 0 0 10px;
+        }
+
+        .subtitle {
+            color: #64748b;
+
+            font-size: 15px;
+
+            margin-bottom: 30px;
+        }
+
+        .input-group {
+            text-align: left;
+
+            margin-bottom: 18px;
+        }
+
+        .input-group label {
+            display: block;
+
+            margin-bottom: 7px;
+
+            color: #334155;
+
+            font-size: 14px;
+
+            font-weight: bold;
+        }
+
+        input {
+            width: 100%;
+
+            padding: 13px 15px;
+
+            border: 1px solid #cbd5e1;
+
+            border-radius: 9px;
+
+            font-size: 15px;
+
+            outline: none;
+
+            transition: 0.2s;
+        }
+
+        input:focus {
+            border-color: #2563eb;
+
+            box-shadow:
+                0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .login-as {
+            text-align: left;
+
+            margin-bottom: 20px;
+        }
+
+        .login-as-label {
+            display: block;
+
+            margin-bottom: 10px;
+
+            color: #334155;
+
+            font-size: 14px;
+
+            font-weight: bold;
+        }
+
+        .role-options {
+            display: flex;
+
+            gap: 8px;
+        }
+
+        .role-option {
+            flex: 1;
+
+            position: relative;
+        }
+
+        .role-option input {
+            position: absolute;
+
+            opacity: 0;
+
+            pointer-events: none;
+        }
+
+        .role-option label {
+            display: block;
+
+            width: 100%;
+
+            padding: 12px 6px;
+
+            text-align: center;
+
+            border: 1px solid #cbd5e1;
+
+            border-radius: 9px;
+
+            color: #475569;
+
+            background: #f8fafc;
+
+            cursor: pointer;
+
+            font-size: 13px;
+
+            font-weight: bold;
+
+            transition: 0.2s;
+        }
+
+        .role-option label:hover {
+            border-color: #2563eb;
+
+            background: #eff6ff;
+        }
+
+        .role-option input:checked + label {
+            background: #2563eb;
+
+            color: white;
+
+            border-color: #2563eb;
+
+            box-shadow:
+                0 5px 12px rgba(37, 99, 235, 0.2);
+        }
+
+        button {
+            width: 100%;
+
+            padding: 13px;
+
+            margin-top: 5px;
+
+            background: #2563eb;
+
+            color: white;
+
+            border: none;
+
+            border-radius: 9px;
+
+            cursor: pointer;
+
+            font-size: 16px;
+
+            font-weight: bold;
+
+            transition: 0.2s;
+        }
+
+        button:hover {
+            background: #1d4ed8;
+
+            transform: translateY(-1px);
+        }
+
+        .forgot-password {
+            margin-top: 18px;
+        }
+
+        .forgot-password a {
+            color: #2563eb;
+
+            text-decoration: none;
+
+            font-size: 14px;
+        }
+
+        .forgot-password a:hover {
+            text-decoration: underline;
+        }
+
+        #message {
+            text-align: center;
+
+            margin-top: 15px;
+
+            font-size: 14px;
+        }
+
+        .signup-link {
+            margin-top: 25px;
+
+            padding-top: 20px;
+
+            border-top: 1px solid #e2e8f0;
+
+            color: #64748b;
+
+            font-size: 14px;
+        }
+
+        .signup-link a {
+            color: #2563eb;
+
+            text-decoration: none;
+
+            font-weight: bold;
+        }
+
+        .signup-link a:hover {
+            text-decoration: underline;
+        }
+
+        .footer {
+            margin-top: 25px;
+
+            color: #94a3b8;
+
+            font-size: 12px;
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<div class="login-box">
+
+    <div class="logo">
+        +
+    </div>
+
+
+    <h1>
+        WELCOME TO MEDICONNECT AI
+    </h1>
+
+
+    <div class="subtitle">
+        Your Hospital AI Assistant
+    </div>
+
+
+    <div class="input-group">
+
+        <label for="username">
+            Username
+        </label>
+
+        <input
+            type="text"
+            id="username"
+            placeholder="Enter your username"
+        >
+
+    </div>
+
+
+    <div class="input-group">
+
+        <label for="password">
+            Password
+        </label>
+
+        <input
+            type="password"
+            id="password"
+            placeholder="Enter your password"
+        >
+
+    </div>
+
+
+    <div class="login-as">
+
+        <span class="login-as-label">
+            Login as
+        </span>
+
+
+        <div class="role-options">
+
+            <div class="role-option">
+
+                <input
+                    type="radio"
+                    id="userRole"
+                    name="loginRole"
+                    value="user"
+                    checked
+                >
+
+                <label for="userRole">
+                    User
+                </label>
+
+            </div>
+
+
+            <div class="role-option">
+
+                <input
+                    type="radio"
+                    id="staffRole"
+                    name="loginRole"
+                    value="staff"
+                >
+
+                <label for="staffRole">
+                    Staff
+                </label>
+
+            </div>
+
+
+            <div class="role-option">
+
+                <input
+                    type="radio"
+                    id="doctorRole"
+                    name="loginRole"
+                    value="doctor"
+                >
+
+                <label for="doctorRole">
+                    Doctor
+                </label>
+
+            </div>
+
+
+            <div class="role-option">
+
+                <input
+                    type="radio"
+                    id="adminRole"
+                    name="loginRole"
+                    value="admin"
+                >
+
+                <label for="adminRole">
+                    Admin
+                </label>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <button onclick="login()">
+        Login
+    </button>
+
+
+    <div class="forgot-password">
+
+        <a href="forgot-password.html">
+            Forgot Password?
+        </a>
+
+    </div>
+
+
+    <div id="message"></div>
+
+
+    <div class="signup-link">
+
+        Don't have an account?
+
+        <a href="register.html">
+            Sign Up
+        </a>
+
+    </div>
+
+
+    <div class="footer">
+        Secure • Simple • Smart Healthcare Assistance
+    </div>
+
+</div>
+
+
+<script>
+
+async function login() {
+
+    const username =
+        document.getElementById("username").value.trim();
+
+
+    const password =
+        document.getElementById("password").value;
+
+
+    const selectedRole =
+        document.querySelector(
+            'input[name="loginRole"]:checked'
+        ).value;
+
+
+    const message =
+        document.getElementById("message");
+
+
+    if (!username || !password) {
+
+        message.innerText =
+            "Please enter username and password.";
+
+        message.style.color = "red";
+
+        return;
+
+    }
+
+
+    try {
+
+        const response = await fetch(
+            "http://127.0.0.1:8000/auth/login",
+            {
+                method: "POST",
+
+                headers: {
+                    "Content-Type": "application/json"
+                },
+
+                body: JSON.stringify({
+
+                    username: username,
+
+                    password: password
+
+                })
+            }
+        );
+
+
+        const data =
+            await response.json();
+
+
+        if (!response.ok) {
+
+            message.innerText =
+                data.detail || "Login failed.";
+
+            message.style.color = "red";
+
+            return;
+        }
+
+
+        /*
+         * GET USER INFORMATION FROM JWT
+         */
+
+        const payload =
+            JSON.parse(
+                atob(
+                    data.access_token.split(".")[1]
+                )
+            );
+
+
+        const actualRole =
+            payload.role;
+
+
+        /*
+         * CHECK SELECTED ROLE
+         */
+
+        if (actualRole !== selectedRole) {
+
+            message.innerText =
+                "The selected login type does not match your account.";
+
+            message.style.color = "red";
+
+            return;
+        }
+
+
+        /*
+         * SAVE LOGIN INFORMATION
+         */
+
+        localStorage.setItem(
+            "access_token",
+            data.access_token
+        );
+
+
+        localStorage.setItem(
+            "username",
+            username
+        );
+
+
+        localStorage.setItem(
+            "role",
+            actualRole
+        );
+
+
+        /*
+         * SAVE SUBTYPE INFORMATION
+         */
+
+        if (payload.staff_type) {
+
+            localStorage.setItem(
+                "staff_type",
+                payload.staff_type
+            );
+
+        }
+
+
+        if (payload.patient_type) {
+
+            localStorage.setItem(
+                "patient_type",
+                payload.patient_type
+            );
+
+        }
+
+
+        if (payload.doctor_category) {
+
+            localStorage.setItem(
+                "doctor_category",
+                payload.doctor_category
+            );
+
+        }
+
+
+        if (payload.doctor_specialization) {
+
+            localStorage.setItem(
+                "doctor_specialization",
+                payload.doctor_specialization
+            );
+
+        }
+
+
+        message.innerText =
+            "Login successful!";
+
+        message.style.color = "green";
+
+
+        /*
+         * REDIRECT BASED ON ROLE
+         */
+
+        setTimeout(() => {
+
+
+            if (actualRole === "admin") {
+
+                window.location.href =
+                    "admin-dashboard.html";
+
+            }
+
+
+            else if (actualRole === "staff") {
+
+                window.location.href =
+                    "staff-dashboard.html";
+
+            }
+
+
+            else if (actualRole === "doctor") {
+
+                window.location.href =
+                    "doctor-dashboard.html";
+
+            }
+
+
+            else if (actualRole === "user") {
+
+                window.location.href =
+                    "dashboard.html";
+
+            }
+
+        }, 800);
+
+
+        console.log(
+            "JWT:",
+            data.access_token
+        );
+
+    }
+
+
+    catch (error) {
+
+        console.error(error);
+
+        message.innerText =
+            "Could not connect to the server.";
+
+        message.style.color = "red";
+
+    }
+
+}
+
+</script>
+
+
+</body>
+
+</html>

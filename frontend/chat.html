@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hospital AI Chat</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial,Helvetica,sans-serif;
+}
+body{
+    background:#eef3fb;
+}
+header{
+    background:#2563eb;
+    color:white;
+    padding:18px 25px;
+    display:flex;
+    justify-content:space-between;
+}
+header button{
+    background:white;
+    color:#2563eb;
+    border:none;
+    padding:8px 14px;
+    border-radius:6px;
+    cursor:pointer;
+}
+.container{
+    max-width:900px;
+    margin:30px auto;
+}
+#chatBox{
+    background:white;
+    height:500px;
+    overflow-y:auto;
+    border-radius:10px;
+    padding:20px;
+    box-shadow:0 3px 10px rgba(0,0,0,.1);
+}
+.user{
+    text-align:right;
+    margin:12px 0;
+}
+.bot{
+    text-align:left;
+    margin:12px 0;
+}
+.bubble{
+    display:inline-block;
+    padding:12px 16px;
+    border-radius:14px;
+    max-width:70%;
+}
+.user .bubble{
+    background:#2563eb;
+    color:white;
+}
+.bot .bubble{
+    background:#e5e7eb;
+}
+.input-area{
+    display:flex;
+    gap:10px;
+    margin-top:15px;
+}
+input{
+    flex:1;
+    padding:12px;
+    border-radius:8px;
+    border:1px solid #ccc;
+}
+button.send{
+    background:#2563eb;
+    color:white;
+    border:none;
+    padding:12px 20px;
+    border-radius:8px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h2>Hospital AI Chat</h2>
+    <button onclick="goBack()">Dashboard</button>
+</header>
+
+<div class="container">
+
+    <div id="chatBox">
+        <div class="bot">
+            <div class="bubble">
+                Hello! I'm your Hospital AI Assistant.
+            </div>
+        </div>
+    </div>
+
+    <div class="input-area">
+        <input
+            id="message"
+            placeholder="Ask about doctors, departments or hospital services..."
+        >
+        <button class="send" onclick="sendMessage()">
+            Send
+        </button>
+    </div>
+
+</div>
+
+<script>
+
+const token = localStorage.getItem("access_token");
+
+if(!token){
+    window.location.href="index.html";
+}
+
+const ws = new WebSocket(
+    "ws://127.0.0.1:8000/ws/chat?token=" +
+    encodeURIComponent(token)
+);
+
+const chatBox = document.getElementById("chatBox");
+
+function addMessage(text, sender){
+
+    const row = document.createElement("div");
+    row.className = sender;
+
+    const bubble = document.createElement("div");
+    bubble.className = "bubble";
+    bubble.innerText = text;
+
+    row.appendChild(bubble);
+
+    chatBox.appendChild(row);
+
+    chatBox.scrollTop = chatBox.scrollHeight;
+}
+
+ws.onmessage = (event)=>{
+    addMessage(event.data,"bot");
+}
+
+ws.onopen = ()=>{
+    console.log("Connected");
+}
+
+ws.onerror = ()=>{
+    addMessage("Connection error.","bot");
+}
+
+function sendMessage(){
+
+    const input = document.getElementById("message");
+
+    if(input.value.trim()===""){
+        return;
+    }
+
+    addMessage(input.value,"user");
+
+    ws.send(input.value);
+
+    input.value="";
+}
+
+document.getElementById("message").addEventListener(
+    "keypress",
+    function(e){
+        if(e.key==="Enter"){
+            sendMessage();
+        }
+    }
+);
+
+function goBack(){
+    window.location.href="dashboard.html";
+}
+
+</script>
+
+</body>
+</html>

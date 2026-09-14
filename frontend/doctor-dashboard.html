@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Doctor Dashboard</title>
+
+<style>
+
+*{
+    box-sizing:border-box;
+    font-family:Arial, Helvetica, sans-serif;
+}
+
+body{
+    margin:0;
+
+    background:#eef3fb;
+
+    min-height:100vh;
+}
+
+
+/* HEADER */
+
+.header{
+    background:white;
+
+    padding:20px 35px;
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    box-shadow:0 2px 10px rgba(0,0,0,.08);
+}
+
+.logo{
+    color:#2563eb;
+
+    font-size:24px;
+
+    font-weight:bold;
+}
+
+.logout{
+    background:#ef4444;
+
+    color:white;
+
+    border:none;
+
+    padding:10px 18px;
+
+    border-radius:7px;
+
+    cursor:pointer;
+
+    font-weight:bold;
+}
+
+.logout:hover{
+    background:#dc2626;
+}
+
+
+/* MAIN */
+
+.container{
+    max-width:1100px;
+
+    margin:35px auto;
+
+    padding:0 20px;
+}
+
+
+/* WELCOME */
+
+.welcome{
+    background:white;
+
+    padding:25px;
+
+    border-radius:12px;
+
+    box-shadow:0 4px 15px rgba(0,0,0,.08);
+
+    margin-bottom:25px;
+}
+
+.welcome h2{
+    margin:0 0 8px;
+
+    color:#1e3a8a;
+}
+
+.welcome p{
+    margin:5px 0;
+
+    color:#64748b;
+}
+
+.specialization{
+    color:#2563eb;
+
+    font-weight:bold;
+}
+
+
+/* CARDS */
+
+.grid{
+    display:grid;
+
+    grid-template-columns:
+        repeat(auto-fit, minmax(220px, 1fr));
+
+    gap:20px;
+}
+
+.card{
+    background:white;
+
+    padding:25px;
+
+    border-radius:12px;
+
+    box-shadow:0 4px 15px rgba(0,0,0,.08);
+
+    cursor:pointer;
+
+    transition:.2s;
+}
+
+.card:hover{
+    transform:translateY(-3px);
+
+    box-shadow:
+        0 8px 20px rgba(37,99,235,.15);
+}
+
+.card h3{
+    margin:0 0 10px;
+
+    color:#2563eb;
+}
+
+.card p{
+    margin:0;
+
+    color:#64748b;
+
+    font-size:14px;
+}
+
+
+/* HELP */
+
+.help{
+    margin-top:30px;
+
+    text-align:center;
+}
+
+.help-button{
+    display:inline-block;
+
+    padding:15px 30px;
+
+    background:#2563eb;
+
+    color:white;
+
+    border-radius:30px;
+
+    text-decoration:none;
+
+    font-weight:bold;
+
+    box-shadow:
+        0 5px 15px rgba(37,99,235,.25);
+}
+
+.help-button:hover{
+    background:#1d4ed8;
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<!-- HEADER -->
+
+<div class="header">
+
+    <div class="logo">
+        MediConnect AI
+    </div>
+
+    <button
+        class="logout"
+        onclick="logout()"
+    >
+        Logout
+    </button>
+
+</div>
+
+
+<!-- MAIN -->
+
+<div class="container">
+
+
+    <!-- WELCOME -->
+
+    <div class="welcome">
+
+        <h2>
+            Welcome, Dr. <span id="doctorName"></span>
+        </h2>
+
+        <p>
+            Doctor Category:
+            <strong id="doctorCategory">
+                Loading...
+            </strong>
+        </p>
+
+        <p>
+            Specialization:
+            <span
+                id="doctorSpecialization"
+                class="specialization"
+            >
+                Loading...
+            </span>
+        </p>
+
+    </div>
+
+
+    <!-- DASHBOARD CARDS -->
+
+    <div class="grid">
+
+
+        <div
+            class="card"
+            onclick="openPage('appointments.html')"
+        >
+
+            <h3>
+                Appointments
+            </h3>
+
+            <p>
+                View and manage your hospital appointments.
+            </p>
+
+        </div>
+
+
+        <div
+            class="card"
+            onclick="openPage('patients.html')"
+        >
+
+            <h3>
+                Patients
+            </h3>
+
+            <p>
+                View available patient information.
+            </p>
+
+        </div>
+
+
+        <div
+            class="card"
+            onclick="openPage('doctors.html')"
+        >
+
+            <h3>
+                Doctors
+            </h3>
+
+            <p>
+                View all doctors and their information.
+            </p>
+
+        </div>
+
+
+        <div
+            class="card"
+            onclick="openPage('staff.html')"
+        >
+
+            <h3>
+                Staff
+            </h3>
+
+            <p>
+                View hospital staff information.
+            </p>
+
+        </div>
+
+
+        <div
+            class="card"
+            onclick="openPage('departments.html')"
+        >
+
+            <h3>
+                Departments
+            </h3>
+
+            <p>
+                View hospital departments.
+            </p>
+
+        </div>
+
+
+        <div
+            class="card"
+            onclick="openPage('chat.html')"
+        >
+
+            <h3>
+                AI Assistant
+            </h3>
+
+            <p>
+                Ask the Hospital AI Assistant questions.
+            </p>
+
+        </div>
+
+
+        <div
+            class="card"
+            onclick="openPage('chat-history.html')"
+        >
+
+            <h3>
+                Chat History
+            </h3>
+
+            <p>
+                View your private AI chat history.
+            </p>
+
+        </div>
+
+
+    </div>
+
+
+    <!-- HELP -->
+
+    <div class="help">
+
+        <a
+            href="chat.html"
+            class="help-button"
+        >
+            HELP
+        </a>
+
+    </div>
+
+</div>
+
+
+<script>
+
+
+/* CHECK LOGIN */
+
+const token =
+    localStorage.getItem(
+        "access_token"
+    );
+
+
+if(!token){
+
+    window.location.href =
+        "index.html";
+
+}
+
+
+/* GET STORED INFORMATION */
+
+const username =
+    localStorage.getItem(
+        "username"
+    );
+
+const doctorCategory =
+    localStorage.getItem(
+        "doctor_category"
+    );
+
+const doctorSpecialization =
+    localStorage.getItem(
+        "doctor_specialization"
+    );
+
+
+/* DISPLAY INFORMATION */
+
+document.getElementById(
+    "doctorName"
+).innerText =
+    username || "Doctor";
+
+
+document.getElementById(
+    "doctorCategory"
+).innerText =
+    doctorCategory || "Not available";
+
+
+document.getElementById(
+    "doctorSpecialization"
+).innerText =
+    doctorSpecialization || "Not available";
+
+
+/* OPEN PAGE */
+
+function openPage(page){
+
+    window.location.href =
+        page;
+
+}
+
+
+/* LOGOUT */
+
+function logout(){
+
+    localStorage.removeItem(
+        "access_token"
+    );
+
+    localStorage.removeItem(
+        "username"
+    );
+
+    localStorage.removeItem(
+        "role"
+    );
+
+    localStorage.removeItem(
+        "staff_type"
+    );
+
+    localStorage.removeItem(
+        "patient_type"
+    );
+
+    localStorage.removeItem(
+        "doctor_category"
+    );
+
+    localStorage.removeItem(
+        "doctor_specialization"
+    );
+
+
+    window.location.href =
+        "index.html";
+
+}
+
+</script>
+
+
+</body>
+
+</html>

@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>User Management - MediConnect AI</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial, Helvetica, sans-serif;
+}
+
+body{
+    min-height:100vh;
+
+    background:
+        linear-gradient(
+            135deg,
+            #dbeafe,
+            #eff6ff,
+            #e0f2fe
+        );
+}
+
+
+/* HEADER */
+
+header{
+    background:#2563eb;
+    color:white;
+
+    padding:18px 35px;
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+    box-shadow:0 4px 15px rgba(37,99,235,.2);
+}
+
+.logo{
+    font-size:23px;
+    font-weight:bold;
+}
+
+.back-button{
+    background:white;
+    color:#2563eb;
+
+    border:none;
+
+    padding:9px 17px;
+
+    border-radius:8px;
+
+    cursor:pointer;
+
+    font-weight:bold;
+}
+
+
+/* MAIN */
+
+.container{
+    max-width:1400px;
+
+    margin:auto;
+
+    padding:40px 30px;
+}
+
+.heading{
+    text-align:center;
+
+    margin-bottom:30px;
+}
+
+.heading h1{
+    color:#1e3a8a;
+
+    font-size:30px;
+
+    margin-bottom:8px;
+}
+
+.heading p{
+    color:#64748b;
+
+    font-size:15px;
+}
+
+
+/* TABLE */
+
+.table-container{
+    background:white;
+
+    border-radius:16px;
+
+    padding:20px;
+
+    box-shadow:
+        0 8px 25px rgba(37,99,235,.12);
+
+    overflow-x:auto;
+}
+
+table{
+    width:100%;
+
+    border-collapse:collapse;
+
+    min-width:1100px;
+}
+
+th{
+    background:#2563eb;
+
+    color:white;
+
+    padding:14px;
+
+    text-align:left;
+
+    white-space:nowrap;
+}
+
+td{
+    padding:14px;
+
+    border-bottom:1px solid #e5e7eb;
+
+    color:#475569;
+
+    vertical-align:middle;
+}
+
+tr:hover{
+    background:#f8fafc;
+}
+
+
+/* ROLE BADGE */
+
+.role{
+    display:inline-block;
+
+    padding:6px 12px;
+
+    border-radius:20px;
+
+    font-size:13px;
+
+    font-weight:bold;
+
+    background:#dbeafe;
+
+    color:#2563eb;
+}
+
+
+/* DETAILS */
+
+.details{
+    font-size:13px;
+
+    line-height:1.6;
+
+    color:#475569;
+}
+
+.details strong{
+    color:#334155;
+}
+
+.no-data{
+    color:#94a3b8;
+
+    font-size:13px;
+}
+
+
+/* ROLE SELECT */
+
+.role-select{
+    padding:7px 10px;
+
+    border:1px solid #cbd5e1;
+
+    border-radius:7px;
+
+    background:white;
+
+    color:#334155;
+
+    cursor:pointer;
+
+    font-size:13px;
+
+    font-weight:bold;
+}
+
+.role-select:focus{
+    outline:none;
+
+    border-color:#2563eb;
+
+    box-shadow:
+        0 0 0 2px rgba(37,99,235,.12);
+}
+
+
+/* UPDATE BUTTON */
+
+.update-btn{
+    background:#2563eb;
+
+    color:white;
+
+    border:none;
+
+    padding:7px 12px;
+
+    border-radius:7px;
+
+    cursor:pointer;
+
+    font-weight:bold;
+
+    margin-left:6px;
+
+    white-space:nowrap;
+}
+
+.update-btn:hover{
+    background:#1d4ed8;
+}
+
+
+/* DELETE BUTTON */
+
+.delete-btn{
+    background:#ef4444;
+
+    color:white;
+
+    border:none;
+
+    padding:7px 12px;
+
+    border-radius:7px;
+
+    cursor:pointer;
+
+    font-weight:bold;
+
+    margin-left:6px;
+
+    white-space:nowrap;
+}
+
+.delete-btn:hover{
+    background:#dc2626;
+}
+
+
+/* MESSAGE */
+
+#message{
+    text-align:center;
+
+    margin-top:20px;
+
+    font-weight:bold;
+}
+
+
+/* MOBILE */
+
+@media(max-width:600px){
+
+    header{
+        padding:15px 20px;
+    }
+
+    .logo{
+        font-size:18px;
+    }
+
+    .container{
+        padding:30px 15px;
+    }
+
+    .heading h1{
+        font-size:25px;
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<header>
+
+    <div class="logo">
+        MediConnect AI
+    </div>
+
+    <button
+        class="back-button"
+        onclick="window.location.href='admin-dashboard.html'">
+
+        ← Admin Dashboard
+
+    </button>
+
+</header>
+
+
+
+<div class="container">
+
+
+    <div class="heading">
+
+        <h1>
+            User Management
+        </h1>
+
+        <p>
+            View and manage registered MediConnect AI users.
+        </p>
+
+    </div>
+
+
+
+    <div class="table-container">
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>ID</th>
+
+                    <th>Username</th>
+
+                    <th>Email</th>
+
+                    <th>Role</th>
+
+                    <th>Staff Type</th>
+
+                    <th>Patient Type</th>
+
+                    <th>Doctor Category</th>
+
+                    <th>Doctor Specialization</th>
+
+                    <th>Action</th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody id="usersTable">
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+
+    <div id="message"></div>
+
+
+</div>
+
+
+
+<script>
+
+
+const token =
+    localStorage.getItem("access_token");
+
+const role =
+    localStorage.getItem("role");
+
+
+/* ADMIN CHECK */
+
+if(!token || role !== "admin"){
+
+    window.location.href =
+        "index.html";
+
+}
+
+
+/* LOAD USERS */
+
+async function loadUsers(){
+
+    const table =
+        document.getElementById("usersTable");
+
+    const message =
+        document.getElementById("message");
+
+
+    try{
+
+        const response =
+            await fetch(
+                "http://127.0.0.1:8000/admin/users/",
+                {
+                    method:"GET",
+
+                    headers:{
+                        "Authorization":
+                            "Bearer " + token
+                    }
+                }
+            );
+
+
+        const users =
+            await response.json();
+
+
+        if(!response.ok){
+
+            message.style.color =
+                "red";
+
+            message.innerText =
+                users.detail ||
+                "Failed to load users.";
+
+            return;
+
+        }
+
+
+        table.innerHTML = "";
+
+
+        users.forEach(user => {
+
+            const row =
+                document.createElement("tr");
+
+
+            const isCurrentAdmin =
+                user.id ==
+                parseInt(
+                    getCurrentUserId()
+                );
+
+
+            const staffType =
+                user.staff_type
+                ? user.staff_type
+                : `<span class="no-data">—</span>`;
+
+
+            const patientType =
+                user.patient_type
+                ? user.patient_type
+                : `<span class="no-data">—</span>`;
+
+
+            const doctorCategory =
+                user.doctor_category
+                ? user.doctor_category
+                : `<span class="no-data">—</span>`;
+
+
+            const doctorSpecialization =
+                user.doctor_specialization
+                ? user.doctor_specialization
+                : `<span class="no-data">—</span>`;
+
+
+            row.innerHTML = `
+
+                <td>${user.id}</td>
+
+                <td>
+                    <strong>${user.username}</strong>
+                </td>
+
+                <td>${user.email}</td>
+
+
+                <td>
+
+                    ${
+                        isCurrentAdmin
+
+                        ?
+
+                        `<span class="role">
+                            ${user.role}
+                        </span>`
+
+                        :
+
+                        `
+
+                        <select
+                            class="role-select"
+                            id="role-${user.id}"
+                        >
+
+                            <option
+                                value="user"
+                                ${user.role === "user" ? "selected" : ""}
+                            >
+                                User
+                            </option>
+
+                            <option
+                                value="staff"
+                                ${user.role === "staff" ? "selected" : ""}
+                            >
+                                Staff
+                            </option>
+
+                            <option
+                                value="doctor"
+                                ${user.role === "doctor" ? "selected" : ""}
+                            >
+                                Doctor
+                            </option>
+
+                            <option
+                                value="admin"
+                                ${user.role === "admin" ? "selected" : ""}
+                            >
+                                Admin
+                            </option>
+
+                        </select>
+
+                        `
+                    }
+
+                </td>
+
+
+                <td>
+
+                    <div class="details">
+
+                        ${staffType}
+
+                    </div>
+
+                </td>
+
+
+                <td>
+
+                    <div class="details">
+
+                        ${patientType}
+
+                    </div>
+
+                </td>
+
+
+                <td>
+
+                    <div class="details">
+
+                        ${doctorCategory}
+
+                    </div>
+
+                </td>
+
+
+                <td>
+
+                    <div class="details">
+
+                        ${doctorSpecialization}
+
+                    </div>
+
+                </td>
+
+
+                <td>
+
+                    ${
+                        isCurrentAdmin
+
+                        ?
+
+                        "<span>Current Admin</span>"
+
+                        :
+
+                        `
+
+                        <button
+                            class="update-btn"
+                            onclick="changeRole(
+                                ${user.id},
+                                '${user.username}'
+                            )">
+
+                            Update Role
+
+                        </button>
+
+
+                        <button
+                            class="delete-btn"
+                            onclick="deleteUser(
+                                ${user.id},
+                                '${user.username}'
+                            )">
+
+                            Delete
+
+                        </button>
+
+                        `
+                    }
+
+                </td>
+
+            `;
+
+
+            table.appendChild(row);
+
+        });
+
+
+    }
+
+    catch(error){
+
+        console.error(error);
+
+        message.style.color =
+            "red";
+
+        message.innerText =
+            "Could not connect to the server.";
+
+    }
+
+}
+
+
+/* GET CURRENT ADMIN USER ID */
+
+function getCurrentUserId(){
+
+    const payload =
+        JSON.parse(
+            atob(
+                token.split(".")[1]
+            )
+        );
+
+    return payload.sub;
+
+}
+
+
+/* CHANGE USER ROLE */
+
+async function changeRole(
+    userId,
+    username
+){
+
+    const select =
+        document.getElementById(
+            `role-${userId}`
+        );
+
+    const newRole =
+        select.value;
+
+
+    const confirmChange =
+        confirm(
+            "Change " +
+            username +
+            "'s role to " +
+            newRole +
+            "?"
+        );
+
+
+    if(!confirmChange){
+
+        return;
+
+    }
+
+
+    try{
+
+        const response =
+            await fetch(
+                `http://127.0.0.1:8000/admin/users/${userId}/role?role=${newRole}`,
+
+                {
+                    method:"PUT",
+
+                    headers:{
+                        "Authorization":
+                            "Bearer " + token
+                    }
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if(!response.ok){
+
+            alert(
+                data.detail ||
+                "Could not update user role."
+            );
+
+            return;
+
+        }
+
+
+        alert(
+            "Role updated successfully."
+        );
+
+
+        loadUsers();
+
+    }
+
+    catch(error){
+
+        console.error(error);
+
+        alert(
+            "Could not connect to the server."
+        );
+
+    }
+
+}
+
+
+/* DELETE USER */
+
+async function deleteUser(
+    userId,
+    username
+){
+
+    const confirmDelete =
+        confirm(
+            "Are you sure you want to delete user: "
+            + username
+            + "?"
+        );
+
+
+    if(!confirmDelete){
+
+        return;
+
+    }
+
+
+    try{
+
+        const response =
+            await fetch(
+                `http://127.0.0.1:8000/admin/users/${userId}`,
+
+                {
+                    method:"DELETE",
+
+                    headers:{
+                        "Authorization":
+                            "Bearer " + token
+                    }
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if(!response.ok){
+
+            alert(
+                data.detail ||
+                "Could not delete user."
+            );
+
+            return;
+
+        }
+
+
+        alert(
+            "User deleted successfully."
+        );
+
+
+        loadUsers();
+
+    }
+
+    catch(error){
+
+        console.error(error);
+
+        alert(
+            "Could not connect to the server."
+        );
+
+    }
+
+}
+
+
+/* LOAD USERS WHEN PAGE OPENS */
+
+loadUsers();
+
+</script>
+
+
+</body>
+
+</html>

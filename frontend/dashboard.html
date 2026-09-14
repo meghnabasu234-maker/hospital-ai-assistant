@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>MediConnect AI Dashboard</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial, Helvetica, sans-serif;
+}
+
+body{
+    min-height:100vh;
+
+    background:
+        linear-gradient(
+            135deg,
+            #dbeafe,
+            #eff6ff,
+            #e0f2fe
+        );
+}
+
+
+/* HEADER */
+
+header{
+    background:#2563eb;
+    color:white;
+
+    padding:18px 35px;
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+    box-shadow:0 4px 15px rgba(37,99,235,.2);
+}
+
+.logo{
+    font-size:23px;
+    font-weight:bold;
+}
+
+.welcome{
+    display:flex;
+    align-items:center;
+    gap:15px;
+}
+
+.logout{
+    background:white;
+    color:#2563eb;
+
+    border:none;
+
+    padding:9px 17px;
+
+    border-radius:8px;
+
+    cursor:pointer;
+
+    font-weight:bold;
+
+    transition:.2s;
+}
+
+.logout:hover{
+    background:#eff6ff;
+}
+
+
+/* MAIN */
+
+.container{
+    max-width:1100px;
+
+    margin:auto;
+
+    padding:40px 30px;
+}
+
+.heading{
+    text-align:center;
+
+    margin-bottom:25px;
+}
+
+.heading h1{
+    color:#1e3a8a;
+
+    font-size:30px;
+
+    margin-bottom:8px;
+}
+
+.heading p{
+    color:#64748b;
+
+    font-size:15px;
+}
+
+
+/* PATIENT INFO */
+
+.patient-info{
+    background:rgba(255,255,255,.96);
+
+    border-radius:16px;
+
+    padding:20px 25px;
+
+    margin-bottom:30px;
+
+    box-shadow:
+        0 8px 25px rgba(37,99,235,.10);
+
+    text-align:center;
+}
+
+.patient-info p{
+    color:#64748b;
+
+    font-size:14px;
+}
+
+.patient-type{
+    color:#2563eb;
+
+    font-weight:bold;
+}
+
+
+/* CARDS */
+
+.cards{
+    display:grid;
+
+    grid-template-columns:
+        repeat(auto-fit,minmax(220px,1fr));
+
+    gap:22px;
+}
+
+.card{
+    background:rgba(255,255,255,.96);
+
+    border-radius:16px;
+
+    padding:28px;
+
+    min-height:160px;
+
+    box-shadow:
+        0 8px 25px rgba(37,99,235,.10);
+
+    cursor:pointer;
+
+    transition:.25s;
+
+    border:1px solid rgba(255,255,255,.8);
+}
+
+.card:hover{
+    transform:translateY(-6px);
+
+    box-shadow:
+        0 14px 30px rgba(37,99,235,.18);
+}
+
+.icon{
+    width:48px;
+    height:48px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    background:#dbeafe;
+
+    color:#2563eb;
+
+    border-radius:12px;
+
+    font-size:23px;
+
+    margin-bottom:18px;
+}
+
+.card h3{
+    color:#1e40af;
+
+    margin-bottom:9px;
+
+    font-size:19px;
+}
+
+.card p{
+    color:#64748b;
+
+    font-size:14px;
+
+    line-height:1.5;
+}
+
+
+/* HELP CLOUD */
+
+.help-cloud{
+    position:fixed;
+
+    right:30px;
+    bottom:30px;
+
+    width:115px;
+    height:65px;
+
+    background:white;
+
+    border-radius:50%;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    color:#2563eb;
+
+    font-size:17px;
+
+    font-weight:bold;
+
+    cursor:pointer;
+
+    box-shadow:
+        0 8px 25px rgba(37,99,235,.25);
+
+    transition:.25s;
+
+    z-index:10;
+}
+
+.help-cloud::before{
+    content:"";
+
+    position:absolute;
+
+    width:28px;
+    height:28px;
+
+    background:white;
+
+    bottom:-8px;
+    left:18px;
+
+    border-radius:50%;
+}
+
+.help-cloud:hover{
+    transform:scale(1.08);
+
+    box-shadow:
+        0 12px 30px rgba(37,99,235,.3);
+}
+
+
+/* HELP PANEL */
+
+.help-panel{
+    display:none;
+
+    position:fixed;
+
+    right:30px;
+    bottom:105px;
+
+    width:280px;
+
+    background:white;
+
+    border-radius:16px;
+
+    padding:22px;
+
+    box-shadow:
+        0 10px 35px rgba(0,0,0,.15);
+
+    z-index:20;
+}
+
+.help-panel h3{
+    color:#1e3a8a;
+
+    margin-bottom:12px;
+}
+
+.help-panel p{
+    color:#64748b;
+
+    font-size:14px;
+
+    line-height:1.5;
+
+    margin-bottom:15px;
+}
+
+.help-panel button{
+    width:100%;
+
+    padding:10px;
+
+    margin-top:8px;
+
+    border:none;
+
+    border-radius:8px;
+
+    background:#2563eb;
+
+    color:white;
+
+    cursor:pointer;
+
+    font-weight:bold;
+}
+
+.help-panel button:hover{
+    background:#1d4ed8;
+}
+
+
+/* MOBILE */
+
+@media(max-width:600px){
+
+    header{
+        padding:15px 20px;
+    }
+
+    .logo{
+        font-size:18px;
+    }
+
+    .welcome{
+        font-size:13px;
+        gap:8px;
+    }
+
+    .container{
+        padding:30px 20px;
+    }
+
+    .help-cloud{
+        right:20px;
+        bottom:20px;
+    }
+
+    .help-panel{
+        right:20px;
+        bottom:95px;
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<header>
+
+    <div class="logo">
+        MediConnect AI
+    </div>
+
+
+    <div class="welcome">
+
+        <span>
+            Welcome,
+            <b id="user"></b>
+        </span>
+
+
+        <button
+            class="logout"
+            onclick="logout()">
+
+            Logout
+
+        </button>
+
+    </div>
+
+</header>
+
+
+
+<div class="container">
+
+
+    <div class="heading">
+
+        <h1>
+            Your Healthcare Dashboard
+        </h1>
+
+        <p>
+            Access your hospital services and
+            AI assistant from one place.
+        </p>
+
+    </div>
+
+
+    <!-- PATIENT INFORMATION -->
+
+    <div class="patient-info">
+
+        <p>
+            Patient Type:
+            <span
+                id="patientType"
+                class="patient-type">
+                Loading...
+            </span>
+        </p>
+
+    </div>
+
+
+
+    <div class="cards">
+
+
+        <!-- AI CHAT -->
+
+        <div
+            class="card"
+            onclick="window.location.href='chat.html'">
+
+            <div class="icon">
+                💬
+            </div>
+
+            <h3>
+                AI Chat
+            </h3>
+
+            <p>
+                Ask hospital-related questions
+                using your private AI assistant.
+            </p>
+
+        </div>
+
+
+
+        <!-- DOCTORS -->
+
+        <div
+            class="card"
+            onclick="window.location.href='doctors.html'">
+
+            <div class="icon">
+                👨‍⚕️
+            </div>
+
+            <h3>
+                Doctors
+            </h3>
+
+            <p>
+                View available doctors,
+                specializations and schedules.
+            </p>
+
+        </div>
+
+
+
+        <!-- DEPARTMENTS -->
+
+        <div
+            class="card"
+            onclick="window.location.href='departments.html'">
+
+            <div class="icon">
+                🏥
+            </div>
+
+            <h3>
+                Departments
+            </h3>
+
+            <p>
+                Explore hospital departments
+                and available services.
+            </p>
+
+        </div>
+
+
+
+        <!-- APPOINTMENTS -->
+
+        <div
+            class="card"
+            onclick="window.location.href='appointments.html'">
+
+            <div class="icon">
+                📅
+            </div>
+
+            <h3>
+                Appointments
+            </h3>
+
+            <p>
+                View your appointments
+                and their current status.
+            </p>
+
+        </div>
+
+
+
+        <!-- HOSPITAL RECORDS -->
+
+        <div
+            class="card"
+            onclick="window.location.href='hospital-records.html'">
+
+            <div class="icon">
+                📋
+            </div>
+
+            <h3>
+                My Hospital Records
+            </h3>
+
+            <p>
+                View your permitted previous
+                hospital records and information.
+            </p>
+
+        </div>
+
+
+
+        <!-- BILLS -->
+
+        <div
+            class="card"
+            onclick="window.location.href='bills.html'">
+
+            <div class="icon">
+                💳
+            </div>
+
+            <h3>
+                My Bills
+            </h3>
+
+            <p>
+                View your hospital bills
+                and payment information.
+            </p>
+
+        </div>
+
+
+
+        <!-- BED & ADMISSION -->
+
+        <div
+            class="card"
+            onclick="window.location.href='admission.html'">
+
+            <div class="icon">
+                🛏️
+            </div>
+
+            <h3>
+                Bed & Admission
+            </h3>
+
+            <p>
+                View your bed number,
+                admission and discharge information.
+            </p>
+
+        </div>
+
+
+
+        <!-- CHAT HISTORY -->
+
+        <div
+            class="card"
+            onclick="window.location.href='chat-history.html'">
+
+            <div class="icon">
+                📝
+            </div>
+
+            <h3>
+                Chat History
+            </h3>
+
+            <p>
+                View only your own previous
+                AI conversations.
+            </p>
+
+        </div>
+
+
+    </div>
+
+</div>
+
+
+
+<!-- HELP CLOUD -->
+
+<div
+    class="help-cloud"
+    onclick="toggleHelp()">
+
+    ☁ HELP
+
+</div>
+
+
+
+<!-- HELP PANEL -->
+
+<div
+    class="help-panel"
+    id="helpPanel">
+
+    <h3>
+        How can we help?
+    </h3>
+
+    <p>
+        Use the options below to quickly
+        access MediConnect AI features.
+    </p>
+
+
+    <button
+        onclick="window.location.href='chat.html'">
+
+        💬 Ask AI Assistant
+
+    </button>
+
+
+    <button
+        onclick="window.location.href='doctors.html'">
+
+        👨‍⚕️ Find Doctors
+
+    </button>
+
+
+    <button
+        onclick="window.location.href='appointments.html'">
+
+        📅 View Appointments
+
+    </button>
+
+
+    <button
+        onclick="window.location.href='hospital-records.html'">
+
+        📋 View Hospital Records
+
+    </button>
+
+</div>
+
+
+
+<script>
+
+
+/* GET LOGIN INFORMATION */
+
+const token =
+    localStorage.getItem("access_token");
+
+const username =
+    localStorage.getItem("username");
+
+const patientType =
+    localStorage.getItem("patient_type");
+
+
+/* CHECK LOGIN */
+
+if(!token || !username){
+
+    window.location.href =
+        "index.html";
+
+}
+
+
+/* DISPLAY USER */
+
+document.getElementById(
+    "user"
+).innerText =
+    username;
+
+
+/* DISPLAY PATIENT TYPE */
+
+document.getElementById(
+    "patientType"
+).innerText =
+    patientType || "Not available";
+
+
+/* LOGOUT */
+
+function logout(){
+
+    localStorage.removeItem(
+        "access_token"
+    );
+
+    localStorage.removeItem(
+        "username"
+    );
+
+    localStorage.removeItem(
+        "role"
+    );
+
+    localStorage.removeItem(
+        "staff_type"
+    );
+
+    localStorage.removeItem(
+        "patient_type"
+    );
+
+    localStorage.removeItem(
+        "doctor_category"
+    );
+
+    localStorage.removeItem(
+        "doctor_specialization"
+    );
+
+    window.location.href =
+        "index.html";
+
+}
+
+
+/* HELP PANEL */
+
+function toggleHelp(){
+
+    const panel =
+        document.getElementById(
+            "helpPanel"
+        );
+
+
+    if(
+        panel.style.display === "block"
+    ){
+
+        panel.style.display =
+            "none";
+
+    }else{
+
+        panel.style.display =
+            "block";
+
+    }
+
+}
+
+</script>
+
+
+</body>
+
+</html>
