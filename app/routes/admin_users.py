@@ -3,6 +3,9 @@ from sqlalchemy.orm import Session
 
 from app.database import get_db
 from app.models.user import UserDB
+from app.models.patient import PatientDB
+from app.models.appointment import AppointmentDB
+from app.models.bill import BillDB
 from app.core.dependencies import require_role
 
 
@@ -132,16 +135,42 @@ def delete_user(
             detail="User not found"
         )
 
-    # Prevent admin from deleting their own account
     if int(current_user["sub"]) == user_id:
         raise HTTPException(
             status_code=400,
             detail="You cannot delete your own admin account"
         )
 
+    # Find linked patient
+    patient = db.query(PatientDB).filter(
+        PatientDB.user_id == user_id
+    ).first()
+
+    if patient:
+        # Find all appointments of this patient
+        appointments = db.query(AppointmentDB).filter(
+            AppointmentDB.patient_id == patient.id
+        ).all()
+
+        # Delete bills first, then appointments
+        for appointment in appointments:
+            bills = db.query(BillDB).filter(
+                BillDB.appointment_id == appointment.id
+            ).all()
+
+            for bill in bills:
+                db.delete(bill)
+
+            db.delete(appointment)
+
+        # Delete patient
+        db.delete(patient)
+
+    # Delete user
     db.delete(user)
+
     db.commit()
 
     return {
-        "message": "User deleted successfully"
+        "message": "User, linked patient, appointments and bills deleted successfully"
     }

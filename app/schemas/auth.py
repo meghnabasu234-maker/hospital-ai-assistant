@@ -11,8 +11,11 @@ class UserRegister(BaseModel):
     # Staff subtype
     staff_type: Optional[str] = None
 
-    # Patient subtype
+    # Patient details
     patient_type: Optional[str] = None
+    age: Optional[int] = None
+    gender: Optional[str] = None
+    disease: Optional[str] = None
 
     # Doctor details
     doctor_category: Optional[str] = None

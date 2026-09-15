@@ -235,9 +235,10 @@ def register(
         new_patient = PatientDB(
             user_id=new_user.id,
             name=user.username,
-            age=0,
-            gender="Not specified",
-            disease="Not specified"
+            age=user.age if user.age is not None else 0,
+            gender=user.gender if user.gender else "Not specified",
+            disease=user.disease if user.disease else "Not specified"
+
         )
 
         db.add(new_patient)

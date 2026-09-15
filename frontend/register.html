@@ -34,6 +34,9 @@ body{
     border-radius:12px;
 
     box-shadow:0 4px 15px rgba(0,0,0,.1);
+
+    max-height:95vh;
+    overflow-y:auto;
 }
 
 h2{
@@ -55,6 +58,12 @@ select{
     font-size:15px;
 
     background:white;
+}
+
+input:focus,
+select:focus{
+    outline:none;
+    border-color:#2563eb;
 }
 
 
@@ -138,6 +147,8 @@ select{
 }
 
 
+/* BUTTON */
+
 button{
     width:100%;
     padding:12px;
@@ -157,11 +168,17 @@ button:hover{
     background:#1d4ed8;
 }
 
+
+/* MESSAGE */
+
 .message{
     text-align:center;
     margin-top:15px;
     font-size:14px;
 }
+
+
+/* LOGIN LINK */
 
 .login-link{
     text-align:center;
@@ -188,6 +205,8 @@ button:hover{
     <h2>Create Account</h2>
 
 
+    <!-- BASIC INFORMATION -->
+
     <input
         type="text"
         id="username"
@@ -209,12 +228,16 @@ button:hover{
     >
 
 
+    <!-- ROLE -->
+
     <div class="role-title">
         Sign Up As
     </div>
 
 
     <div class="role-options">
+
+        <!-- USER -->
 
         <div class="role-option">
 
@@ -234,6 +257,8 @@ button:hover{
         </div>
 
 
+        <!-- STAFF -->
+
         <div class="role-option">
 
             <input
@@ -251,6 +276,8 @@ button:hover{
         </div>
 
 
+        <!-- DOCTOR -->
+
         <div class="role-option">
 
             <input
@@ -267,6 +294,8 @@ button:hover{
 
         </div>
 
+
+        <!-- ADMIN -->
 
         <div class="role-option">
 
@@ -287,7 +316,9 @@ button:hover{
     </div>
 
 
+    <!-- ================================================= -->
     <!-- USER / PATIENT -->
+    <!-- ================================================= -->
 
     <div
         id="patientSection"
@@ -318,10 +349,67 @@ button:hover{
 
         </select>
 
+
+        <!-- AGE -->
+
+        <div class="subtype-title">
+            Age
+        </div>
+
+        <input
+            type="number"
+            id="patientAge"
+            placeholder="Enter your age"
+            min="1"
+            max="120"
+        >
+
+
+        <!-- GENDER -->
+
+        <div class="subtype-title">
+            Gender
+        </div>
+
+        <select id="patientGender">
+
+            <option value="">
+                Select Gender
+            </option>
+
+            <option value="Male">
+                Male
+            </option>
+
+            <option value="Female">
+                Female
+            </option>
+
+            <option value="Other">
+                Other
+            </option>
+
+        </select>
+
+
+        <!-- HEALTH CONDITION -->
+
+        <div class="subtype-title">
+            Health Condition
+        </div>
+
+        <input
+            type="text"
+            id="patientDisease"
+            placeholder="Enter your health condition"
+        >
+
     </div>
 
 
+    <!-- ================================================= -->
     <!-- STAFF -->
+    <!-- ================================================= -->
 
     <div
         id="staffSection"
@@ -363,7 +451,9 @@ button:hover{
     </div>
 
 
+    <!-- ================================================= -->
     <!-- DOCTOR -->
+    <!-- ================================================= -->
 
     <div
         id="doctorSection"
@@ -417,16 +507,22 @@ button:hover{
     </div>
 
 
+    <!-- SIGN UP -->
+
     <button onclick="register()">
         Sign Up
     </button>
 
+
+    <!-- MESSAGE -->
 
     <div
         id="message"
         class="message">
     </div>
 
+
+    <!-- LOGIN -->
 
     <div class="login-link">
 
@@ -444,7 +540,9 @@ button:hover{
 <script>
 
 
-/* DOCTOR SPECIALIZATIONS */
+/* =====================================================
+   DOCTOR SPECIALIZATIONS
+===================================================== */
 
 const doctorSpecializations = {
 
@@ -474,7 +572,9 @@ const doctorSpecializations = {
 };
 
 
-/* SHOW CORRECT FIELDS */
+/* =====================================================
+   SHOW CORRECT FIELDS
+===================================================== */
 
 function updateFields(){
 
@@ -526,7 +626,9 @@ function updateFields(){
 }
 
 
-/* UPDATE SPECIALIZATIONS */
+/* =====================================================
+   UPDATE DOCTOR SPECIALIZATIONS
+===================================================== */
 
 function updateSpecializations(){
 
@@ -547,7 +649,9 @@ function updateSpecializations(){
 
 
     if(!category){
+
         return;
+
     }
 
 
@@ -569,7 +673,9 @@ function updateSpecializations(){
 }
 
 
-/* REGISTER */
+/* =====================================================
+   REGISTER
+===================================================== */
 
 async function register(){
 
@@ -597,17 +703,41 @@ async function register(){
         ).value;
 
 
+    /* PATIENT */
+
     const patientType =
         document.getElementById(
             "patientType"
         ).value;
 
 
+    const patientAge =
+        document.getElementById(
+            "patientAge"
+        ).value;
+
+
+    const patientGender =
+        document.getElementById(
+            "patientGender"
+        ).value;
+
+
+    const patientDisease =
+        document.getElementById(
+            "patientDisease"
+        ).value.trim();
+
+
+    /* STAFF */
+
     const staffType =
         document.getElementById(
             "staffType"
         ).value;
 
+
+    /* DOCTOR */
 
     const doctorCategory =
         document.getElementById(
@@ -621,11 +751,15 @@ async function register(){
         ).value;
 
 
+    /* MESSAGE */
+
     const message =
         document.getElementById(
             "message"
         );
 
+
+    /* BASIC VALIDATION */
 
     if(
         !username ||
@@ -636,27 +770,88 @@ async function register(){
         message.style.color = "red";
 
         message.innerText =
-            "Please fill in all fields.";
+            "Please fill in all basic fields.";
 
         return;
 
     }
 
 
-    if(
-        selectedRole === "user" &&
-        !patientType
-    ){
+    /* PATIENT VALIDATION */
 
-        message.style.color = "red";
+    if(selectedRole === "user"){
 
-        message.innerText =
-            "Please select a Patient Type.";
+        if(!patientType){
 
-        return;
+            message.style.color = "red";
+
+            message.innerText =
+                "Please select a Patient Type.";
+
+            return;
+
+        }
+
+
+        if(!patientAge){
+
+            message.style.color = "red";
+
+            message.innerText =
+                "Please enter your age.";
+
+            return;
+
+        }
+
+
+        const age =
+            parseInt(patientAge);
+
+
+        if(
+            isNaN(age) ||
+            age < 1 ||
+            age > 120
+        ){
+
+            message.style.color = "red";
+
+            message.innerText =
+                "Please enter a valid age between 1 and 120.";
+
+            return;
+
+        }
+
+
+        if(!patientGender){
+
+            message.style.color = "red";
+
+            message.innerText =
+                "Please select your gender.";
+
+            return;
+
+        }
+
+
+        if(!patientDisease){
+
+            message.style.color = "red";
+
+            message.innerText =
+                "Please enter your health condition.";
+
+            return;
+
+        }
 
     }
 
+
+    /* STAFF VALIDATION */
 
     if(
         selectedRole === "staff" &&
@@ -672,6 +867,8 @@ async function register(){
 
     }
 
+
+    /* DOCTOR VALIDATION */
 
     if(
         selectedRole === "doctor" &&
@@ -690,6 +887,10 @@ async function register(){
 
     }
 
+
+    /* =================================================
+       SEND REGISTRATION REQUEST
+    ================================================= */
 
     try{
 
@@ -714,15 +915,39 @@ async function register(){
 
                         role:selectedRole,
 
+
+                        /* STAFF */
+
                         staff_type:
                             selectedRole === "staff"
                                 ? staffType
                                 : null,
 
+
+                        /* PATIENT */
+
                         patient_type:
                             selectedRole === "user"
                                 ? patientType
                                 : null,
+
+                        age:
+                            selectedRole === "user"
+                                ? parseInt(patientAge)
+                                : null,
+
+                        gender:
+                            selectedRole === "user"
+                                ? patientGender
+                                : null,
+
+                        disease:
+                            selectedRole === "user"
+                                ? patientDisease
+                                : null,
+
+
+                        /* DOCTOR */
 
                         doctor_category:
                             selectedRole === "doctor"
@@ -743,6 +968,8 @@ async function register(){
             await response.json();
 
 
+        /* REGISTRATION ERROR */
+
         if(!response.ok){
 
             message.style.color = "red";
@@ -755,6 +982,8 @@ async function register(){
 
         }
 
+
+        /* SUCCESS */
 
         message.style.color = "green";
 
@@ -788,7 +1017,9 @@ async function register(){
 }
 
 
-/* DEFAULT */
+/* =====================================================
+   DEFAULT
+===================================================== */
 
 updateFields();
 

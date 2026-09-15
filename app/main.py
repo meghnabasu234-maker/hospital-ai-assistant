@@ -353,13 +353,31 @@ def delete_patient(
             detail="Patient not found"
         )
 
+    # Find all appointments of this patient
+    appointments = db.query(AppointmentDB).filter(
+        AppointmentDB.patient_id == patient_id
+    ).all()
+
+    # Delete related bills first, then appointments
+    for appointment in appointments:
+
+        bills = db.query(BillDB).filter(
+            BillDB.appointment_id == appointment.id
+        ).all()
+
+        for bill in bills:
+            db.delete(bill)
+
+        db.delete(appointment)
+
+    # Delete patient
     db.delete(patient)
+
     db.commit()
 
     return {
-        "message": "Patient deleted successfully"
+        "message": "Patient, appointments and bills deleted successfully"
     }
-
 
 # ============================================================
 # DOCTOR CRUD
@@ -743,6 +761,157 @@ def get_appointment(
         "status": appointment.status,
         "fee": appointment.fee,
         "payment_status": appointment.payment_status
+    }
+
+
+# ============================================================
+# UPDATE APPOINTMENT
+# ============================================================
+
+@app.put("/appointments/{appointment_id}")
+def update_appointment(
+    appointment_id: int,
+    appointment: Appointment,
+    db: Session = Depends(get_db),
+    current_user: dict = Depends(get_current_user)
+):
+    role = current_user.get("role")
+    user_id = int(current_user["sub"])
+
+    existing = db.query(AppointmentDB).filter(
+        AppointmentDB.id == appointment_id
+    ).first()
+
+    if not existing:
+        raise HTTPException(
+            status_code=404,
+            detail="Appointment not found."
+        )
+
+    # Patients can update only their own appointment
+    if role == "user":
+        patient = db.query(PatientDB).filter(
+            PatientDB.user_id == user_id
+        ).first()
+
+        if not patient or existing.patient_id != patient.id:
+            raise HTTPException(
+                status_code=403,
+                detail="You can only update your own appointments."
+            )
+
+    # Doctors cannot directly edit appointment details
+    elif role == "doctor":
+        raise HTTPException(
+            status_code=403,
+            detail="Doctors cannot directly edit appointment details."
+
+        )
+
+    elif role not in ["admin", "staff"]:
+        raise HTTPException(
+            status_code=403,
+            detail="You are not allowed to update appointments."
+        )
+
+    # Validate doctor
+    doctor = db.query(DoctorDB).filter(
+        DoctorDB.id == appointment.doctor_id
+    ).first()
+
+    if not doctor:
+        raise HTTPException(
+            status_code=404,
+            detail="Doctor not found."
+        )
+
+    existing.patient_id = appointment.patient_id
+    existing.doctor_id = appointment.doctor_id
+    existing.date = getattr(appointment, "date", None)
+    existing.time = getattr(appointment, "time", None)
+    existing.reason = appointment.reason
+    existing.fee = doctor.appointment_fee
+
+    db.commit()
+    db.refresh(existing)
+
+    return {
+        "message": "Appointment updated successfully.",
+        "appointment_id": existing.id,
+        "patient_id": existing.patient_id,
+        "doctor_id": existing.doctor_id,
+        "date": existing.date,
+        "time": existing.time,
+        "reason": existing.reason,
+        "status": existing.status,
+        "fee": existing.fee,
+        "payment_status": existing.payment_status
+    }
+
+# ============================================================
+# DELETE APPOINTMENT
+# ============================================================
+
+@app.delete("/appointments/{appointment_id}")
+def delete_appointment(
+    appointment_id: int,
+    db: Session = Depends(get_db),
+    current_user: dict = Depends(get_current_user)
+):
+    role = current_user.get("role")
+    user_id = int(current_user["sub"])
+
+    appointment = db.query(AppointmentDB).filter(
+        AppointmentDB.id == appointment_id
+    ).first()
+
+    if not appointment:
+        raise HTTPException(
+            status_code=404,
+            detail="Appointment not found."
+        )
+
+    # Patients can delete only their own appointment
+    if role == "user":
+        patient = db.query(PatientDB).filter(
+            PatientDB.user_id == user_id
+        ).first()
+
+        if not patient or appointment.patient_id != patient.id:
+            raise HTTPException(
+                status_code=403,
+                detail="You can only delete your own appointments."
+            )
+
+    # Doctors cannot delete appointments
+    elif role == "doctor":
+        raise HTTPException(
+            status_code=403,
+            detail="Doctors cannot delete appointments."
+        )
+
+    elif role not in ["admin", "staff"]:
+        raise HTTPException(
+            status_code=403,
+            detail="You are not allowed to delete appointments."
+        )
+
+    # Delete related bills first
+    bills = db.query(BillDB).filter(
+        BillDB.appointment_id == appointment_id
+    ).all()
+
+    for bill in bills:
+        db.delete(bill)
+
+    # Delete appointment
+    db.delete(appointment)
+
+    db.commit()
+
+    return {
+        "message": "Appointment deleted successfully.",
+        "appointment_id": appointment_id
     }
 
 

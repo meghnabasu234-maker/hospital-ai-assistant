@@ -1,4 +1,28 @@
+# Virtual environment
 .venv/
-__pycache__/
-*.pyc
+
+# Environment variables and secrets
 .env
+
+# Python cache
+__pycache__/
+*.py[cod]
+
+# Pytest
+.pytest_cache/
+
+# IDE files
+.vscode/
+.idea/
+
+# Local database files
+*.db
+*.sqlite
+*.sqlite3
+
+# FAISS/local generated files
+*.index
+
+# Temporary files
+*.tmp
+*.log

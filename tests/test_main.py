@@ -16,10 +16,29 @@ def test_health_check():
 
 
 def test_login_endpoint_exists():
+    # Register a temporary test user
+    register_response = client.post(
+        "/auth/register",
+        json={
+            "username": "pytest_user",
+            "email": "pytest_user@example.com",
+            "password": "Test@12345",
+            "role": "user",
+            "patient_type": "New Patient",
+            "age": 21,
+            "gender": "Female",
+            "disease": "None"
+        }
+    )
+
+    # User may already exist from an earlier test run
+    assert register_response.status_code in [200, 400]
+
+    # Test login
     response = client.post(
         "/auth/login",
         json={
-            "username": "newpatient01",
+            "username": "pytest_user",
             "password": "Test@12345"
         }
     )
