@@ -1,3 +1,5 @@
+from urllib import response
+
 from fastapi import FastAPI, Depends, HTTPException, WebSocket
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
@@ -19,6 +21,7 @@ from app.models.patient import PatientDB
 from app.models.doctor import DoctorDB
 from app.models.appointment import AppointmentDB
 from app.models.bill import BillDB
+from app.models.chat_history import ChatHistoryDB
 
 from app.routes.auth import router as auth_router
 from app.routes.documents import router as documents_router
@@ -1562,13 +1565,28 @@ SECURITY RULES
         ]
 
     # ========================================================
-    # FINAL RESPONSE
+    # SAVE CHAT HISTORY
     # ========================================================
 
+    user_id = int(current_user["sub"])
+
+    chat_history = ChatHistoryDB(
+    user_id=user_id,
+    question=question,
+    answer=response
+)
+
+    db.add(chat_history)
+    db.commit()
+
+# ========================================================
+# FINAL RESPONSE
+# ========================================================
+
     return {
-        "response": response,
-        "sources": sources
-    }
+    "response": response,
+    "sources": sources
+}
 
 
 # ============================================================
@@ -1608,3 +1626,19 @@ async def websocket_chat(
     websocket: WebSocket
 ):
     await handle_chat(websocket)
+
+@app.get("/chat-history")
+def get_chat_history(
+    db: Session = Depends(get_db),
+    current_user: dict = Depends(get_current_user)
+):
+    user_id = int(current_user["sub"])
+
+    history = (
+        db.query(ChatHistoryDB)
+        .filter(ChatHistoryDB.user_id == user_id)
+        .order_by(ChatHistoryDB.id.desc())
+        .all()
+    )
+
+    return history
