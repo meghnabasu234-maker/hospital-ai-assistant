@@ -29,7 +29,6 @@ body{
     min-height:100vh;
 }
 
-
 /* HEADER */
 
 header{
@@ -68,7 +67,6 @@ header h2{
     background:#eff6ff;
 }
 
-
 /* MAIN */
 
 .container{
@@ -82,26 +80,27 @@ header h2{
 .heading{
     text-align:center;
 
-    margin-bottom:30px;
+    margin-bottom:35px;
 }
 
 .heading h1{
     color:#1e3a8a;
 
     margin-bottom:8px;
+
+    font-size:34px;
 }
 
 .heading p{
     color:#64748b;
 
-    font-size:14px;
+    font-size:15px;
 }
 
-
-/* DEPARTMENT */
+/* CATEGORY */
 
 .department{
-    margin-bottom:35px;
+    margin-bottom:40px;
 }
 
 .department-title{
@@ -109,15 +108,18 @@ header h2{
 
     color:white;
 
-    padding:13px 18px;
+    padding:14px 20px;
 
     border-radius:10px;
 
-    margin-bottom:18px;
+    margin-bottom:20px;
 
-    font-size:20px;
+    font-size:21px;
+
+    font-weight:bold;
+
+    box-shadow:0 5px 15px rgba(37,99,235,.15);
 }
-
 
 /* DOCTOR GRID */
 
@@ -129,7 +131,6 @@ header h2{
 
     gap:20px;
 }
-
 
 /* DOCTOR CARD */
 
@@ -201,20 +202,6 @@ header h2{
     font-size:14px;
 }
 
-
-/* LOADING */
-
-.loading{
-    text-align:center;
-
-    color:#64748b;
-
-    padding:40px;
-
-    font-size:16px;
-}
-
-
 /* ERROR */
 
 .error{
@@ -229,7 +216,6 @@ header h2{
     text-align:center;
 }
 
-
 /* EMPTY */
 
 .empty{
@@ -243,7 +229,6 @@ header h2{
 
     color:#64748b;
 }
-
 
 /* MOBILE */
 
@@ -263,6 +248,10 @@ header h2{
 
     .doctor-grid{
         grid-template-columns:1fr;
+    }
+
+    .heading h1{
+        font-size:28px;
     }
 
 }
@@ -292,9 +281,7 @@ header h2{
 </header>
 
 
-
 <div class="container">
-
 
     <div class="heading">
 
@@ -303,27 +290,18 @@ header h2{
         </h1>
 
         <p>
-            For your care, comfort, and well-being.
+            Find the right specialist for your care, comfort, and well-being.
         </p>
 
     </div>
 
 
-    <div
-        id="doctorList"
-        class="loading">
-
-        Loading doctors...
-
-    </div>
-
+    <div id="doctorList"></div>
 
 </div>
 
 
-
 <script>
-
 
 /* GET TOKEN */
 
@@ -341,7 +319,108 @@ if(!token){
 }
 
 
-/* LOAD DOCTORS */
+/*
+========================================================
+CATEGORY MAPPING
+========================================================
+*/
+
+function getCategory(specialization){
+
+    const value =
+        (specialization || "").toLowerCase();
+
+
+    if(
+        value.includes("cardio")
+    ){
+        return "❤️ Cardiology";
+    }
+
+
+    if(
+        value.includes("neurolog")
+    ){
+        return "🧠 Neurology";
+    }
+
+
+    if(
+        value.includes("pediatric")
+    ){
+        return "👶 Pediatrics";
+    }
+
+
+    if(
+        value.includes("psychiatr") ||
+        value.includes("psycholog")
+    ){
+        return "🧠 Mental Health";
+    }
+
+
+    if(
+        value.includes("oncolog")
+    ){
+        return "🎗️ Oncology";
+    }
+
+
+    if(
+        value.includes("emergency")
+    ){
+        return "🚑 Emergency Medicine";
+    }
+
+
+    if(
+        value.includes("radiolog")
+    ){
+        return "🔬 Radiology";
+    }
+
+
+    if(
+        value.includes("patholog")
+    ){
+        return "🧪 Pathology";
+    }
+
+
+    if(
+        value.includes("orthopedic")
+    ){
+        return "🦴 Orthopedics";
+    }
+
+
+    if(
+        value.includes("surgeon") ||
+        value.includes("surgery")
+    ){
+        return "🏥 General Surgery";
+    }
+
+
+    if(
+        value.includes("general medicine") ||
+        value.includes("general practitioner")
+    ){
+        return "🩺 General Medicine";
+    }
+
+
+    return "🏥 Other Specialists";
+
+}
+
+
+/*
+========================================================
+LOAD DOCTORS
+========================================================
+*/
 
 async function loadDoctors(){
 
@@ -403,38 +482,49 @@ async function loadDoctors(){
         }
 
 
-        /* GROUP DOCTORS BY DEPARTMENT */
+        /*
+        ========================================================
+        GROUP DOCTORS BY CATEGORY
+        ========================================================
+        */
 
-        const departments = {};
+        const categories = {};
 
 
         doctors.forEach(doc => {
 
-            const department =
-                doc.department ||
-                "Other";
+            const category =
+                getCategory(doc.specialization);
 
-            if(!departments[department]){
 
-                departments[department] = [];
+            if(!categories[category]){
+
+                categories[category] = [];
 
             }
 
-            departments[department].push(doc);
+
+            categories[category].push(doc);
 
         });
 
 
-        list.className = "";
+        /*
+        ========================================================
+        DISPLAY CATEGORIES
+        ========================================================
+        */
+
+        list.innerHTML = "";
 
 
-        /* DISPLAY DEPARTMENTS */
+        Object.keys(categories).forEach(
+            categoryName => {
 
-        Object.keys(departments).forEach(
-            departmentName => {
 
                 const departmentSection =
                     document.createElement("div");
+
 
                 departmentSection.className =
                     "department";
@@ -444,9 +534,10 @@ async function loadDoctors(){
 
                     <div class="department-title">
 
-                        🏥 ${departmentName}
+                        ${categoryName}
 
                     </div>
+
 
                     <div class="doctor-grid"></div>
 
@@ -459,11 +550,13 @@ async function loadDoctors(){
                     );
 
 
-                departments[departmentName]
+                categories[categoryName]
                     .forEach(doc => {
+
 
                         const card =
                             document.createElement("div");
+
 
                         card.className =
                             "card";
@@ -505,14 +598,17 @@ async function loadDoctors(){
                             <div class="info">
 
                                 <b>Department:</b>
-                                ${doc.department || "Not assigned"}
+                                ${categoryName.replace(
+                                    /^[^\w]+/,
+                                    ""
+                                )}
 
                             </div>
 
 
                             <div class="rating">
 
-                                ⭐ ${doc.rating ?? 0}
+                                ⭐ ${doc.rating ?? "Not rated"}
 
                             </div>
 
@@ -532,7 +628,8 @@ async function loadDoctors(){
         );
 
 
-    }catch(error){
+    }
+    catch(error){
 
         console.error(error);
 
@@ -541,12 +638,8 @@ async function loadDoctors(){
 
             <div class="error">
 
-                Unable to connect to the hospital server.
-
-                <br><br>
-
-                Please make sure the FastAPI server
-                is running.
+                Unable to load doctors.
+                Please try again later.
 
             </div>
 
@@ -557,7 +650,11 @@ async function loadDoctors(){
 }
 
 
-/* START */
+/*
+========================================================
+START
+========================================================
+*/
 
 loadDoctors();
 
