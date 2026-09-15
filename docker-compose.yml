@@ -1,0 +1,29 @@
+services:
+  db:
+    image: postgres:16
+    container_name: hospital-postgres
+    environment:
+      POSTGRES_DB: hospital_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  web:
+    build: .
+    container_name: hospital-ai-assistant
+    depends_on:
+      - db
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@db:5432/hospital_db
+      SECRET_KEY: change_this_secret_key
+      GROQ_API_KEY: ${GROQ_API_KEY}
+    volumes:
+      - .:/app
+
+volumes:
+  postgres_data:

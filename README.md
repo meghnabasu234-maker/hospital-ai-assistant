@@ -231,6 +231,22 @@ The current development database has already been stamped with the baseline migr
 
 ---
 
+## Docker Compose Setup
+
+Docker Compose is provided to run the FastAPI application and PostgreSQL database using containers.
+
+### Prerequisites
+
+Install Docker Desktop before running the project with Docker Compose.
+
+### Run with Docker Compose
+
+Create a `.env` file and add:
+
+```env
+GROQ_API_KEY=your_groq_api_key
+
+
 ## Start the FastAPI Server
 
 Run:
